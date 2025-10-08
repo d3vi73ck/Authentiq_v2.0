@@ -1,0 +1,176 @@
+{
+  "Index": {
+    "meta_title": "Authentiq - Expense Justification Platform for NGOs",
+    "meta_description": "Streamline your expense validation process with AI-powered document verification and multi-tenant management for NGOs."
+  },
+  "Navbar": {
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "product": "Product",
+    "docs": "Docs",
+    "blog": "Blog",
+    "community": "Community",
+    "company": "Company"
+  },
+  "Hero": {
+    "follow_twitter": "Follow Authentiq on Twitter",
+    "title": "Authentiq - <important>Expense Justification Platform</important> for NGOs",
+    "description": "Streamline your expense validation process with AI-powered document verification and multi-tenant management.",
+    "primary_button": "Get Started for NGOs",
+    "secondary_button": "Schedule Demo"
+  },
+  "Sponsors": {
+    "title": "Sponsored by"
+  },
+  "Features": {
+    "section_subtitle": "Features",
+    "section_title": "Streamline Your NGO Expense Management",
+    "section_description": "Authentiq provides comprehensive expense justification and document verification tools designed specifically for NGOs.",
+    "feature1_title": "Multi-Tenant Organization Management",
+    "feature2_title": "AI-Powered Document Verification",
+    "feature3_title": "Expense Submission Workflows",
+    "feature4_title": "Role-Based Approval System",
+    "feature5_title": "OCR and Data Extraction",
+    "feature6_title": "Reporting and Analytics",
+    "feature_description": "Automate your expense validation process with intelligent document analysis and multi-level approval workflows."
+  },
+  "Pricing": {
+    "section_subtitle": "Pricing",
+    "section_title": "Affordable Plans for NGOs of All Sizes",
+    "section_description": "Choose the plan that fits your organization's needs with transparent, NGO-friendly pricing.",
+    "button_text": "Get Started"
+  },
+  "PricingPlan": {
+    "free_plan_name": "Free",
+    "premium_plan_name": "Pro",
+    "enterprise_plan_name": "Enterprise",
+    "free_plan_description": "For small NGOs",
+    "premium_plan_description": "For growing NGOs",
+    "enterprise_plan_description": "For large NGOs",
+    "feature_team_member": "{number} Team Members",
+    "feature_website": "{number} Organizations",
+    "feature_storage": "{number} GB Storage",
+    "feature_transfer": "{number} Documents/Month",
+    "feature_email_support": "Email Support",
+    "plan_interval_month": "month",
+    "plan_interval_year": "year",
+    "next_renew_date": "Your subscription renews on {date}"
+  },
+  "FAQ": {
+    "question1": "How does Authentiq handle multi-organization management?",
+    "answer1": "Authentiq provides comprehensive multi-tenant architecture allowing NGOs to manage multiple organizations, projects, and teams under a single account with separate data isolation and role-based access controls.",
+    "question2": "What document security and compliance measures are in place?",
+    "answer2": "Authentiq employs bank-level encryption, secure document storage, audit trails, and compliance with international data protection standards to ensure your expense documents remain secure and confidential.",
+    "question3": "Can Authentiq integrate with our existing accounting systems?",
+    "answer3": "Yes, Authentiq offers API integrations with popular accounting software and can export data in multiple formats (CSV, Excel, PDF) for seamless integration with your existing financial systems.",
+    "question4": "Does Authentiq support multiple languages for international NGOs?",
+    "answer4": "Absolutely. Authentiq supports multiple languages and can be configured to work with different currencies and regional compliance requirements for global NGO operations.",
+    "question5": "How does the AI-powered document verification work?",
+    "answer5": "Our AI analyzes uploaded expense documents using OCR technology to extract key information, verify authenticity, flag potential issues, and automatically categorize expenses according to your organization's policies.",
+    "question6": "What kind of support is available for NGOs?",
+    "answer6": "We provide dedicated NGO support including onboarding assistance, training resources, and priority support to ensure your team can effectively use Authentiq for your expense management needs."
+  },
+  "CTA": {
+    "title": "Ready to streamline your expense management?",
+    "description": "Join hundreds of NGOs using Authentiq to simplify their expense justification and document verification processes.",
+    "button_text": "Start Free Trial"
+  },
+  "Footer": {
+    "product": "Product",
+    "docs": "Docs",
+    "blog": "Blog",
+    "community": "Community",
+    "company": "Company",
+    "terms_of_service": "Terms Of Service",
+    "privacy_policy": "Privacy Policy",
+    "designed_by": "Designed by <author></author>."
+  },
+  "ProtectFallback": {
+    "not_enough_permission": "You do not have the permissions to perform this action"
+  },
+  "SignIn": {
+    "meta_title": "Sign in",
+    "meta_description": "Seamlessly sign in to your account with our user-friendly login process."
+  },
+  "SignUp": {
+    "meta_title": "Sign up",
+    "meta_description": "Effortlessly create an account through our intuitive sign-up process."
+  },
+  "DashboardLayout": {
+    "home": "Home",
+    "todos": "Todos",
+    "members": "Members",
+    "billing": "Billing",
+    "settings": "Settings"
+  },
+  "Dashboard": {
+    "meta_title": "Authentiq Dashboard",
+    "meta_description": "Manage your NGO expense submissions, document verification, and approval workflows with Authentiq's comprehensive dashboard."
+  },
+  "DashboardIndex": {
+    "title_bar": "Dashboard",
+    "title_bar_description": "Welcome to your dashboard",
+    "message_state_title": "Let's get started",
+    "message_state_description": "You can customize this page by editing the file at <code>dashboard/page.tsx</code>",
+    "message_state_button": "Star on GitHub",
+    "message_state_alternative": "Want more features using the same stack? Try <url></url>."
+  },
+  "UserProfile": {
+    "title_bar": "User Profile",
+    "title_bar_description": "View and manage your user profile"
+  },
+  "OrganizationProfile": {
+    "title_bar": "Organization Management",
+    "title_bar_description": "Manage your organization"
+  },
+  "Billing": {
+    "title_bar": "Billing",
+    "title_bar_description": "Manage your billing and subscription",
+    "current_section_title": "Current Plan",
+    "current_section_description": "Adjust your payment plan to best suit your requirements",
+    "manage_subscription_button": "Manage Subscription"
+  },
+  "BillingOptions": {
+    "current_plan": "Current Plan",
+    "upgrade_plan": "Get Started"
+  },
+  "CheckoutConfirmation": {
+    "title_bar": "Payment Confirmation",
+    "message_state_title": "Payment successful",
+    "message_state_description": "Your payment has been successfully processed. Thank you for your purchase!",
+    "message_state_button": "Go back to Billing"
+  },
+  "DataTable": {
+    "no_results": "No results."
+  },
+  "Todos": {
+    "title_bar": "Todo List",
+    "title_bar_description": "View and manage your todo list",
+    "add_todo_button": "New todo"
+  },
+  "TodoTableColumns": {
+    "open_menu": "Open menu",
+    "edit": "Edit",
+    "delete": "Delete",
+    "title_header": "Title",
+    "message_header": "Message",
+    "created_at_header": "Created at"
+  },
+  "AddTodo": {
+    "title_bar": "Add Todo",
+    "add_todo_section_title": "Create a new todo",
+    "add_todo_section_description": "Fill in the form below to create a new todo"
+  },
+  "EditTodo": {
+    "title_bar": "Edit todo",
+    "edit_todo_section_title": "Modify todo",
+    "edit_todo_section_description": "Fill in the form below to edit the todo"
+  },
+  "TodoForm": {
+    "title_label": "Title",
+    "title_description": "Enter a descriptive title for your todo.",
+    "message_title": "Message",
+    "message_description": "Enter a detailed message for your todo.",
+    "submit_button": "Submit"
+  }
+}
