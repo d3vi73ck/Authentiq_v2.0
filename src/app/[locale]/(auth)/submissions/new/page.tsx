@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { expenseTypes } from '@/constants/expenseTypes'
+import { TitleBar } from '@/features/dashboard/TitleBar'
 
 export default function NewSubmissionPage() {
   const router = useRouter()
@@ -70,14 +71,12 @@ export default function NewSubmissionPage() {
   const selectedExpenseType = expenseTypes[formData.type]
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">{t('new_submission_title')}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {t('new_submission_description')}
-        </p>
-      </div>
+      <TitleBar
+        title={t('new_submission_title')}
+        description={t('new_submission_description')}
+      />
 
       {/* Error Message */}
       {error && (
@@ -174,7 +173,7 @@ export default function NewSubmissionPage() {
           {selectedExpenseType && (
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
               <h3 className="text-sm font-medium text-blue-800 mb-2">
-                Required documents for {selectedExpenseType.label}:
+                {t('required_documents', { type: selectedExpenseType.label })}
               </h3>
               <ul className="text-sm text-blue-700 space-y-1">
                 {selectedExpenseType.required.map((doc, index) => (
@@ -211,14 +210,14 @@ export default function NewSubmissionPage() {
 
       {/* Help Text */}
       <div className="mt-6 p-4 bg-muted border border-border rounded-md">
-        <h3 className="text-sm font-medium text-foreground mb-2">How it works?</h3>
+        <h3 className="text-sm font-medium text-foreground mb-2">{t('how_it_works')}</h3>
         <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• Select the expense type to see required documents</li>
-          <li>• After creation, you can upload supporting documents</li>
-          <li>• Once all documents are uploaded, you can submit the request</li>
-          <li>• AI analysis of documents will be done automatically</li>
+          <li>• {t('how_it_works_step1')}</li>
+          <li>• {t('how_it_works_step2')}</li>
+          <li>• {t('how_it_works_step3')}</li>
+          <li>• {t('how_it_works_step4')}</li>
         </ul>
       </div>
-    </div>
+    </>
   )
 }

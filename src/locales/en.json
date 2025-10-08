@@ -101,7 +101,15 @@
     "todos": "Todos",
     "members": "Members",
     "billing": "Billing",
-    "settings": "Settings"
+    "settings": "Settings",
+    "submissions": "Submissions",
+    "new_expense": "New Expense",
+    "review": "Review",
+    "admin_dashboard": "Admin Dashboard",
+    "reports": "Reports",
+    "export_reports": "Export Reports",
+    "organization_settings": "Organization Settings",
+    "user_profile": "User Profile"
   },
   "Dashboard": {
     "meta_title": "Authentiq Dashboard",
@@ -172,5 +180,35 @@
     "message_title": "Message",
     "message_description": "Enter a detailed message for your todo.",
     "submit_button": "Submit"
+  },
+  "Submissions": {
+    "title_bar": "Submissions",
+    "title_bar_description": "Manage your expense submissions",
+    "new_submission_title": "New Expense Submission",
+    "new_submission_description": "Create a new expense submission with required documents",
+    "submission_details_title": "Expense Details",
+    "submission_details_description": "View and manage expense submission details",
+    "submissions_title": "Expense Submissions",
+    "submissions_description": "View and manage all your expense submissions",
+    "no_submissions_title": "No submissions",
+    "no_submissions_description": "Get started by creating a new expense submission.",
+    "new_expense_button": "New Expense",
+    "back_to_submissions": "← Back to submissions",
+    "expense_details": "Expense Details",
+    "documents": "Documents",
+    "actions": "Actions",
+    "submit_for_review": "Submit for Review",
+    "back_to_list": "Back to List",
+    "comments": "Comments",
+    "expense_type": "Expense Type",
+    "title": "Title",
+    "amount": "Amount",
+    "expense_date": "Expense Date",
+    "required_documents": "Required documents for {type}:",
+    "how_it_works": "How it works?",
+    "how_it_works_step1": "Select the expense type to see required documents",
+    "how_it_works_step2": "After creation, you can upload supporting documents",
+    "how_it_works_step3": "Once all documents are uploaded, you can submit the request",
+    "how_it_works_step4": "AI analysis of documents will be done automatically"
   }
 }

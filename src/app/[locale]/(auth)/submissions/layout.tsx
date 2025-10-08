@@ -5,7 +5,7 @@ import { DashboardHeader } from '@/features/dashboard/DashboardHeader';
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
     locale: props.params.locale,
-    namespace: 'Dashboard',
+    namespace: 'Submissions',
   });
 
   return {
@@ -14,7 +14,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
   };
 }
 
-export default function DashboardLayout(props: { children: React.ReactNode }) {
+export default function SubmissionsLayout(props: { children: React.ReactNode }) {
   return (
     <>
       <div className="shadow-md">

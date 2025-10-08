@@ -16,14 +16,11 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/templates/Logo';
 import { getI18nPath } from '@/utils/Helpers';
+import { useNavigationMenu } from './NavigationMenu';
 
-export const DashboardHeader = (props: {
-  menu: {
-    href: string;
-    label: string;
-  }[];
-}) => {
+export const DashboardHeader = () => {
   const locale = useLocale();
+  const menu = useNavigationMenu();
 
   return (
     <>
@@ -62,7 +59,7 @@ export const DashboardHeader = (props: {
 
         <nav className="ml-3 max-lg:hidden">
           <ul className="flex flex-row items-center gap-x-3 text-lg font-medium [&_a:hover]:opacity-100 [&_a]:opacity-75">
-            {props.menu.map(item => (
+            {menu.map(item => (
               <li key={item.href}>
                 <ActiveLink href={item.href}>{item.label}</ActiveLink>
               </li>
@@ -80,7 +77,7 @@ export const DashboardHeader = (props: {
                   <ToggleMenuButton />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {props.menu.map(item => (
+                  {menu.map(item => (
                     <DropdownMenuItem key={item.href} asChild>
                       <Link href={item.href}>{item.label}</Link>
                     </DropdownMenuItem>

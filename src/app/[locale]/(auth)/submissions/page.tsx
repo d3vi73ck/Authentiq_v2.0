@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TitleBar } from '@/features/dashboard/TitleBar'
 
 interface File {
   id: string
@@ -109,20 +110,18 @@ export default function SubmissionsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <>
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('submissions_title')}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t('submissions_description')}
-            </p>
-          </div>
-          <Button onClick={() => router.push('/submissions/new')}>
-            New Expense
-          </Button>
-        </div>
+      <TitleBar
+        title={t('title_bar')}
+        description={t('title_bar_description')}
+      />
+
+      {/* Action Bar */}
+      <div className="mb-8 flex justify-end">
+        <Button onClick={() => router.push('/submissions/new')}>
+          {t('new_expense_button')}
+        </Button>
       </div>
 
       {/* Error Message */}
@@ -151,13 +150,13 @@ export default function SubmissionsPage() {
             <svg className="mx-auto h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-foreground">No submissions</h3>
+            <h3 className="mt-2 text-sm font-medium text-foreground">{t('no_submissions_title')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Get started by creating a new expense submission.
+              {t('no_submissions_description')}
             </p>
             <div className="mt-6">
               <Button onClick={() => router.push('/submissions/new')}>
-                New Expense
+                {t('new_expense_button')}
               </Button>
             </div>
           </div>
@@ -215,6 +214,6 @@ export default function SubmissionsPage() {
           </Button>
         </div>
       )}
-    </div>
+    </>
   )
 }

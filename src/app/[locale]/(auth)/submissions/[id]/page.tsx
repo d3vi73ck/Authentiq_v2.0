@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TitleBar } from '@/features/dashboard/TitleBar'
 
 interface File {
   id: string
@@ -38,6 +40,7 @@ interface Submission {
 export default function SubmissionDetailsPage() {
   const params = useParams()
   const router = useRouter()
+  const t = useTranslations('Submissions')
   const [submission, setSubmission] = useState<Submission | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
@@ -135,33 +138,31 @@ export default function SubmissionDetailsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <>
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center space-x-2 mb-2">
-              <Button
-                variant="ghost"
-                onClick={() => router.push('/submissions')}
-                className="text-blue-600 hover:text-blue-900 text-sm p-0 h-auto"
-              >
-                ← Back to submissions
-              </Button>
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {submission.title || `Expense ${submission.type}`}
-            </h1>
-            <div className="mt-2 flex items-center space-x-4">
-              <Badge variant="secondary" className={getStatusColor(submission.status)}>
-                {submission.status}
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Created on {formatDate(submission.createdAt)}
-              </span>
-            </div>
+      <TitleBar
+        title={submission.title || `Expense ${submission.type}`}
+        description={
+          <div className="flex items-center space-x-4">
+            <Badge variant="secondary" className={getStatusColor(submission.status)}>
+              {submission.status}
+            </Badge>
+            <span className="text-sm text-muted-foreground">
+              Created on {formatDate(submission.createdAt)}
+            </span>
           </div>
-        </div>
+        }
+      />
+
+      {/* Back Navigation */}
+      <div className="mb-8">
+        <Button
+          variant="ghost"
+          onClick={() => router.push('/submissions')}
+          className="text-blue-600 hover:text-blue-900 text-sm p-0 h-auto"
+        >
+          {t('back_to_submissions')}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -169,25 +170,25 @@ export default function SubmissionDetailsPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Submission Details */}
           <div className="bg-card shadow-sm border border-border rounded-lg p-6">
-            <h2 className="text-lg font-medium text-foreground mb-4">Expense Details</h2>
+            <h2 className="text-lg font-medium text-foreground mb-4">{t('expense_details')}</h2>
             <dl className="grid grid-cols-1 gap-4">
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">Expense Type</dt>
+                <dt className="text-sm font-medium text-muted-foreground">{t('expense_type')}</dt>
                 <dd className="mt-1 text-sm text-foreground">{submission.type}</dd>
               </div>
               {submission.title && (
                 <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Title</dt>
+                  <dt className="text-sm font-medium text-muted-foreground">{t('title')}</dt>
                   <dd className="mt-1 text-sm text-foreground">{submission.title}</dd>
                 </div>
               )}
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">Amount</dt>
+                <dt className="text-sm font-medium text-muted-foreground">{t('amount')}</dt>
                 <dd className="mt-1 text-sm text-foreground">{formatAmount(submission.amount)}</dd>
               </div>
               {submission.spentAt && (
                 <div>
-                  <dt className="text-sm font-medium text-muted-foreground">Expense Date</dt>
+                  <dt className="text-sm font-medium text-muted-foreground">{t('expense_date')}</dt>
                   <dd className="mt-1 text-sm text-foreground">{formatDate(submission.spentAt)}</dd>
                 </div>
               )}
@@ -197,7 +198,7 @@ export default function SubmissionDetailsPage() {
           {/* Files List */}
           <div className="bg-card shadow-sm border border-border rounded-lg p-6">
             <h2 className="text-lg font-medium text-foreground mb-4">
-              Documents ({submission.files.length})
+              {t('documents')} ({submission.files.length})
             </h2>
             
             {submission.files.length === 0 ? (
@@ -235,14 +236,14 @@ export default function SubmissionDetailsPage() {
         <div className="space-y-6">
           {/* Status Actions */}
           <div className="bg-card shadow-sm border border-border rounded-lg p-6">
-            <h3 className="text-lg font-medium text-foreground mb-4">Actions</h3>
+            <h3 className="text-lg font-medium text-foreground mb-4">{t('actions')}</h3>
             <div className="space-y-3">
               {submission.status === 'DRAFT' && submission.files.length > 0 && (
                 <Button
                   onClick={() => {/* TODO: Implement submit action */}}
                   className="w-full"
                 >
-                  Submit for Review
+                  {t('submit_for_review')}
                 </Button>
               )}
               <Button
@@ -250,7 +251,7 @@ export default function SubmissionDetailsPage() {
                 onClick={() => router.push('/submissions')}
                 className="w-full"
               >
-                Back to List
+                {t('back_to_list')}
               </Button>
             </div>
           </div>
@@ -259,7 +260,7 @@ export default function SubmissionDetailsPage() {
           {submission.comments.length > 0 && (
             <div className="bg-card shadow-sm border border-border rounded-lg p-6">
               <h3 className="text-lg font-medium text-foreground mb-4">
-                Comments ({submission.comments.length})
+                {t('comments')} ({submission.comments.length})
               </h3>
               <div className="space-y-4">
                 {submission.comments.map((comment) => (
@@ -285,6 +286,6 @@ export default function SubmissionDetailsPage() {
           )}
         </div>
       </div>
-    </div>
+    </>
   )
 }

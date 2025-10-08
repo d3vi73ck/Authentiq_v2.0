@@ -101,7 +101,15 @@
     "todos": "Todos",
     "members": "Membres",
     "billing": "Facturation",
-    "settings": "Réglages"
+    "settings": "Réglages",
+    "submissions": "Soumissions",
+    "new_expense": "Nouvelle Dépense",
+    "review": "Révision",
+    "admin_dashboard": "Tableau de Bord Admin",
+    "reports": "Rapports",
+    "export_reports": "Exporter Rapports",
+    "organization_settings": "Paramètres Organisation",
+    "user_profile": "Profil Utilisateur"
   },
   "Dashboard": {
     "meta_title": "Tableau de Bord Authentiq",
@@ -172,5 +180,35 @@
     "message_title": "Message",
     "message_description": "Entrez un message détaillé pour votre todo.",
     "submit_button": "Envoyer"
+  },
+  "Submissions": {
+    "title_bar": "Soumissions",
+    "title_bar_description": "Gérez vos soumissions de dépenses",
+    "new_submission_title": "Nouvelle Soumission de Dépense",
+    "new_submission_description": "Créez une nouvelle soumission de dépense avec les documents requis",
+    "submission_details_title": "Détails de la Dépense",
+    "submission_details_description": "Affichez et gérez les détails de la soumission de dépense",
+    "submissions_title": "Soumissions de Dépenses",
+    "submissions_description": "Affichez et gérez toutes vos soumissions de dépenses",
+    "no_submissions_title": "Aucune soumission",
+    "no_submissions_description": "Commencez par créer une nouvelle soumission de dépense.",
+    "new_expense_button": "Nouvelle Dépense",
+    "back_to_submissions": "← Retour aux soumissions",
+    "expense_details": "Détails de la Dépense",
+    "documents": "Documents",
+    "actions": "Actions",
+    "submit_for_review": "Soumettre pour Révision",
+    "back_to_list": "Retour à la Liste",
+    "comments": "Commentaires",
+    "expense_type": "Type de Dépense",
+    "title": "Titre",
+    "amount": "Montant",
+    "expense_date": "Date de Dépense",
+    "required_documents": "Documents requis pour {type} :",
+    "how_it_works": "Comment ça marche ?",
+    "how_it_works_step1": "Sélectionnez le type de dépense pour voir les documents requis",
+    "how_it_works_step2": "Après création, vous pouvez télécharger les documents justificatifs",
+    "how_it_works_step3": "Une fois tous les documents téléchargés, vous pouvez soumettre la demande",
+    "how_it_works_step4": "L'analyse IA des documents sera effectuée automatiquement"
   }
 }
