@@ -8,19 +8,19 @@ const sendDefaults = {
 };
 
 // FIXME: Add your production URL
-const productionURL = 'https://react-saas.com';
+const productionURL = 'https://qubitcraft.cloud';
 
 const emailChannel = new EmailAlertChannel('email-channel-1', {
   // FIXME: add your own email address, Checkly will send you an email notification if a check fails
-  address: 'contact@creativedesignsguru.com',
+  address: 'tilaoui.aymen@gmail.com',
   ...sendDefaults,
 });
 
 export const config = defineConfig({
   // FIXME: Add your own project name, logical ID, and repository URL
-  projectName: 'SaaS Boilerplate',
-  logicalId: 'saas-boilerplate',
-  repoUrl: 'https://github.com/ixartz/Next-js-Boilerplate',
+  projectName: 'Authentiq',
+  logicalId: 'authentiq',
+  repoUrl: 'https://github.com/d3vi73ck/Authentiq_v2.0',
   checks: {
     locations: ['us-east-1', 'eu-west-1'],
     tags: ['website'],

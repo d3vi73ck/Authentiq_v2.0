@@ -182,6 +182,8 @@
     "submit_button": "Envoyer"
   },
   "Submissions": {
+    "meta_title": "Soumissions de Dépenses - Authentiq",
+    "meta_description": "Gérez et soumettez vos documents de dépenses d'ONG avec la vérification alimentée par l'IA et les flux de travail d'approbation.",
     "title_bar": "Soumissions",
     "title_bar_description": "Gérez vos soumissions de dépenses",
     "new_submission_title": "Nouvelle Soumission de Dépense",

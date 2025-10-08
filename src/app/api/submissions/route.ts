@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
         organizationId: orgId,
         type,
         title: title || null,
-        amount: amount ? amount.toString() : null,
+        amount: amount !== undefined && amount !== null ? amount.toString() : null,
         spentAt: spentAt ? new Date(spentAt) : null,
         status: 'DRAFT',
         createdBy: userId

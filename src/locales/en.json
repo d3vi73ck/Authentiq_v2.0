@@ -182,6 +182,8 @@
     "submit_button": "Submit"
   },
   "Submissions": {
+    "meta_title": "Expense Submissions - Authentiq",
+    "meta_description": "Manage and submit your NGO expense documents with AI-powered verification and approval workflows.",
     "title_bar": "Submissions",
     "title_bar_description": "Manage your expense submissions",
     "new_submission_title": "New Expense Submission",
