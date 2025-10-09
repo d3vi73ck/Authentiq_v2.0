@@ -129,6 +129,23 @@ export default function middleware(
         return NextResponse.redirect(orgSelection);
       }
 
+      // For API routes, skip locale prefixing but still handle authentication
+      if (req.nextUrl.pathname.startsWith('/api/')) {
+        const response = NextResponse.next();
+        
+        // Add tenant context to request headers for tenant-specific routes
+        if (currentTenantSubdomain) {
+          response.headers.set('x-tenant-subdomain', currentTenantSubdomain);
+          
+          // If user is authenticated, also set the organization context
+          if (authObj.orgId) {
+            response.headers.set('x-organization-id', authObj.orgId);
+          }
+        }
+        
+        return response;
+      }
+
       // Add tenant context to request headers for tenant-specific routes
       if (currentTenantSubdomain) {
         const response = intlMiddleware(req);
@@ -144,6 +161,11 @@ export default function middleware(
 
       return intlMiddleware(req);
     })(request, event);
+  }
+
+  // For non-protected API routes, skip locale prefixing
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next();
   }
 
   return intlMiddleware(request);

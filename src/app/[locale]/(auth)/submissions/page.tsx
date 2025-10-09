@@ -134,7 +134,7 @@ export default function SubmissionsPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
+              <h3 className="text-sm font-medium text-red-800">{t('error')}</h3>
               <div className="mt-1 text-sm text-red-700">
                 <p>{error}</p>
               </div>
@@ -180,11 +180,11 @@ export default function SubmissionsPage() {
                     </div>
                     
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>Type: {submission.type}</span>
-                      <span>Amount: {formatAmount(submission.amount)}</span>
-                      <span>Files: {submission.files.length}</span>
-                      <span>Comments: {submission._count.comments}</span>
-                      <span>Created: {formatDate(submission.createdAt)}</span>
+                      <span>{t('list.type_label', { type: submission.type })}</span>
+                      <span>{t('list.amount_label', { amount: formatAmount(submission.amount) })}</span>
+                      <span>{t('list.files_label', { count: submission.files.length })}</span>
+                      <span>{t('list.comments_label', { count: submission._count.comments })}</span>
+                      <span>{t('list.created_label', { date: formatDate(submission.createdAt) })}</span>
                     </div>
                   </div>
                   
@@ -210,7 +210,7 @@ export default function SubmissionsPage() {
               console.log('Load more submissions')
             }}
           >
-            Load More
+            {t('list.load_more_button')}
           </Button>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
+import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema } from '@/models/Schema'
 import { minioClient, generateObjectKey, uploadFile } from '@/libs/minio'
@@ -88,10 +89,14 @@ export async function POST(request: NextRequest) {
       ? (kind as FileKind)
       : determineFileKind(validation.mimeType!)
 
+    // Generate unique ID for file using CUID2
+    const fileId = createId()
+    
     // Create file record in database using Drizzle
     const [fileRecord] = await db
       .insert(fileSchema)
       .values({
+        id: fileId,
         submissionId,
         kind: fileKind,
         objectKey,

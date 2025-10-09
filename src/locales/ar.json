@@ -1,0 +1,251 @@
+
+{
+  "Index": {
+    "meta_title": " Authentiq - منصة تبرير النفقات للمنظمات غير الحكومية",
+    "meta_description": " تبسيط عملية التحقق من النفقات باستخدام التحقق من المستندات المدعوم بالذكاء الاصطناعي والإدارة متعددة المستأجرين للمنظمات غير الحكومية."
+  },
+  "Navbar": {
+    "sign_in": " تسجيل الدخول",
+    "sign_up": " التسجيل",
+    "product": " المنتج",
+    "docs": " المستندات",
+    "blog": " المدونة",
+    "community": " المجتمع",
+    "company": " الشركة"
+  },
+  "Hero": {
+    "follow_twitter": " تابع Authentiq على تويتر",
+    "title": " Authentiq - <important>منصة تبرير النفقات</important> للمنظمات غير الحكومية",
+    "description": " تبسيط عملية التحقق من النفقات باستخدام التحقق من المستندات المدعوم بالذكاء الاصطناعي والإدارة متعددة المستأجرين.",
+    "primary_button": " ابدأ للمنظمات غير الحكومية",
+    "secondary_button": " جدولة عرض توضيحي"
+  },
+  "Sponsors": {
+    "title": " برعاية"
+  },
+  "Features": {
+    "section_subtitle": " الميزات",
+    "section_title": " تبسيط إدارة نفقات منظمتك غير الحكومية",
+    "section_description": " يوفر Authentiq أدوات شاملة لتبرير النفقات والتحقق من المستندات المصممة خصيصًا للمنظمات غير الحكومية.",
+    "feature1_title": " إدارة المنظمات متعددة المستأجرين",
+    "feature2_title": " التحقق من المستندات المدعوم بالذكاء الاصطناعي",
+    "feature3_title": " سير عمل تقديم النفقات",
+    "feature4_title": " نظام الموافقة القائم على الأدوار",
+    "feature5_title": " التعرف الضوئي على الحروف واستخراج البيانات",
+    "feature6_title": " التقارير والتحليلات",
+    "feature_description": " أتمتة عملية التحقق من النفقات مع التحليل الذكي للمستندات وسير عمل الموافقة متعددة المستويات."
+  },
+  "Pricing": {
+    "section_subtitle": " التسعير",
+    "section_title": " خطط بأسعار معقولة للمنظمات غير الحكومية بجميع الأحجام",
+    "section_description": " اختر الخطة التي تناسب احتياجات منظمتك مع تسعير شفاف وصديق للمنظمات غير الحكومية.",
+    "button_text": " ابدأ"
+  },
+  "PricingPlan": {
+    "free_plan_name": " مجاني",
+    "premium_plan_name": " احترافي",
+    "enterprise_plan_name": " مؤسسة",
+    "free_plan_description": " للمنظمات غير الحكومية الصغيرة",
+    "premium_plan_description": " للمنظمات غير الحكومية النامية",
+    "enterprise_plan_description": " للمنظمات غير الحكومية الكبيرة",
+    "feature_team_member": " {number} أعضاء الفريق",
+    "feature_website": " {number} منظمات",
+    "feature_storage": " {number} جيجابايت تخزين",
+    "feature_transfer": " {number} مستند/شهر",
+    "feature_email_support": " دعم البريد الإلكتروني",
+    "plan_interval_month": " شهر",
+    "plan_interval_year": " سنة",
+    "next_renew_date": " يتم تجديد اشتراكك في {date}"
+  },
+  "FAQ": {
+    "question1": " كيف تتعامل Authentiq مع إدارة المنظمات المتعددة؟",
+    "answer1": " توفر Authentiq بنية متعددة المستأجرين شاملة تسمح للمنظمات غير الحكومية بإدارة منظمات ومشاريع وفرق متعددة تحت حساب واحد مع عزل بيانات منفصل وضوابط وصول قائمة على الأدوار.",
+    "question2": " ما هي إجراءات أمان المستندات والامتثال المعمول بها؟",
+    "answer2": " تستخدم Authentiq تشفيرًا على مستوى البنوك، وتخزينًا آمنًا للمستندات، ومسارات تدقيق، والامتثال لمعايير حماية البيانات الدولية لضمان بقاء مستندات نفقاتك آمنة وسرية.",
+    "question3": " هل يمكن لـ Authentiq التكامل مع أنظمتنا المحاسبية الحالية؟",
+    "answer3": " نعم، تقدم Authentiq تكاملات API مع برامج المحاسبة الشائعة ويمكنها تصدير البيانات بتنسيقات متعددة (CSV، Excel، PDF) للتكامل السلس مع أنظمتك المالية الحالية.",
+    "question4": " هل يدعم Authentiq لغات متعددة للمنظمات غير الحكومية الدولية؟",
+    "answer4": " بالتأكيد. يدعم Authentiq لغات متعددة ويمكن تكوينه للعمل بعملات مختلفة ومتطلبات الامتثال الإقليمية لعمليات المنظمات غير الحكومية العالمية.",
+    "question5": " كيف يعمل التحقق من المستندات المدعوم بالذكاء الاصطناعي؟",
+    "answer5": " يحلل الذكاء الاصطناعي الخاص بنا مستندات النفقات التي تم تحميلها باستخدام تقنية OCR لاستخراج المعلومات الرئيسية، والتحقق من الأصالة، والإشارة إلى المشكلات المحتملة، وتصنيف النفقات تلقائيًا وفقًا لسياسات منظمتك.",
+    "question6": " ما نوع الدعم المتاح للمنظمات غير الحكومية؟",
+    "answer6": " نقدم دعمًا مخصصًا للمنظمات غير الحكومية بما في ذلك المساعدة في بدء التشغيل، وموارد التدريب، والدعم ذو الأولوية لضمان قدرة فريقك على استخدام Authentiq بفعالية لاحتياجات إدارة نفقاتك."
+  },
+  "CTA": {
+    "title": " مستعد لتبسيط إدارة نفقاتك؟",
+    "description": " انضم إلى مئات المنظمات غير الحكومية التي تستخدم Authentiq لتبسيط عمليات تبرير نفقاتها والتحقق من المستندات.",
+    "button_text": " ابدأ التجربة المجانية"
+  },
+  "Footer": {
+    "product": " المنتج",
+    "docs": " المستندات",
+    "blog": " المدونة",
+    "community": " المجتمع",
+    "company": " الشركة",
+    "terms_of_service": " شروط الخدمة",
+    "privacy_policy": " سياسة الخصوصية",
+    "designed_by": " صمم بواسطة <author></author>."
+  },
+  "ProtectFallback": {
+    "not_enough_permission": " ليس لديك الأذونات لأداء هذا الإجراء"
+  },
+  "SignIn": {
+    "meta_title": " تسجيل الدخول",
+    "meta_description": " سجل الدخول إلى حسابك بسهولة."
+  },
+  "SignUp": {
+    "meta_title": " التسجيل",
+    "meta_description": " أنشئ حسابًا دون عناء من خلال عملية التسجيل البديهية لدينا."
+  },
+  "DashboardLayout": {
+    "home": " الرئيسية",
+    "todos": " المهام",
+    "members": " الأعضاء",
+    "billing": " الفواتير",
+    "settings": " الإعدادات",
+    "submissions": " التقديمات",
+    "new_expense": " نفقة جديدة",
+    "review": " مراجعة",
+    "admin_dashboard": " لوحة تحكم المسؤول",
+    "reports": " التقارير",
+    "export_reports": " تصدير التقارير",
+    "organization_settings": " إعدادات المنظمة",
+    "user_profile": " ملف المستخدم"
+  },
+  "Dashboard": {
+    "meta_title": " لوحة تحكم Authentiq",
+    "meta_description": " إدارة تقديمات نفقات منظمتك غير الحكومية، والتحقق من المستندات، وسير عمل الموافقة مع لوحة تحكم Authentiq الشاملة."
+  },
+  "DashboardIndex": {
+    "title_bar": " لوحة التحكم",
+    "title_bar_description": " مرحبًا بك في لوحة التحكم الخاصة بك",
+    "message_state_title": " لنبدأ",
+    "message_state_description": " يمكنك تخصيص هذه الصفحة عن طريق تحرير الملف في <code>dashboard/page.tsx</code>",
+    "message_state_button": " نجم على GitHub",
+    "message_state_alternative": " تريد المزيد من الميزات باستخدام نفس المكدس؟ جرب <url></url>."
+  },
+  "UserProfile": {
+    "title_bar": " ملف المستخدم",
+    "title_bar_description": " عرض وإدارة ملف المستخدم الخاص بك"
+  },
+  "OrganizationProfile": {
+    "title_bar": " إدارة المنظمة",
+    "title_bar_description": " إدارة منظمتك"
+  },
+  "Billing": {
+    "title_bar": " الفواتير",
+    "title_bar_description": " إدارة الفواتير والاشتراك الخاص بك",
+    "current_section_title": " الخطة الحالية",
+    "current_section_description": " اضبط خطة الدفع الخاصة بك لتلبي احتياجاتك بشكل أفضل",
+    "manage_subscription_button": " إدارة الاشتراك"
+  },
+  "BillingOptions": {
+    "current_plan": " الخطة الحالية",
+    "upgrade_plan": " ابدأ"
+  },
+  "CheckoutConfirmation": {
+    "title_bar": " تأكيد الدفع",
+    "message_state_title": " تم الدفع بنجاح",
+    "message_state_description": " تمت معالجة دفعتك بنجاح. شكرًا لك على شرائك!",
+    "message_state_button": " العودة إلى الفواتير"
+  },
+  "DataTable": {
+    "no_results": " لا توجد نتائج."
+  },
+  "Todos": {
+    "title_bar": " قائمة المهام",
+    "title_bar_description": " عرض وإدارة قائمة المهام الخاصة بك",
+    "add_todo_button": " مهمة جديدة"
+  },
+  "TodoTableColumns": {
+    "open_menu": " فتح القائمة",
+    "edit": " تعديل",
+    "delete": " حذف",
+    "title_header": " العنوان",
+    "message_header": " الرسالة",
+    "created_at_header": " تم الإنشاء في"
+  },
+  "AddTodo": {
+    "title_bar": " إضافة مهمة",
+    "add_todo_section_title": " إنشاء مهمة جديدة",
+    "add_todo_section_description": " املأ النموذج أدناه لإنشاء مهمة جديدة"
+  },
+  "EditTodo": {
+    "title_bar": " تعديل المهمة",
+    "edit_todo_section_title": " تعديل المهمة",
+    "edit_todo_section_description": " املأ النموذج أدناه لتعديل المهمة"
+  },
+  "TodoForm": {
+    "title_label": " العنوان",
+    "title_description": " أدخل عنوانًا وصفيًا لمهمتك.",
+    "message_title": " الرسالة",
+    "message_description": " أدخل رسالة مفصلة لمهمتك.",
+    "submit_button": " إرسال"
+  },
+  "Submissions": {
+    "meta_title": " تقديمات النفقات - Authentiq",
+    "meta_description": " إدارة وتقديم مستندات نفقات منظمتك غير الحكومية مع التحقق المدعوم بالذكاء الاصطناعي وسير عمل الموافقة.",
+    "title_bar": " التقديمات",
+    "title_bar_description": " إدارة تقديمات نفقاتك",
+    "new_submission_title": " تقديم نفقة جديدة",
+    "new_submission_description": " إنشاء تقديم نفقة جديدة مع المستندات المطلوبة",
+    "submission_details_title": " تفاصيل النفقة",
+    "submission_details_description": " عرض وإدارة تفاصيل تقديم النفقة",
+    "submissions_title": " تقديمات النفقات",
+    "submissions_description": " عرض وإدارة جميع تقديمات نفقاتك",
+    "no_submissions_title": " لا توجد تقديمات",
+    "no_submissions_description": " ابدأ بإنشاء تقديم نفقة جديد.",
+    "new_expense_button": " نفقة جديدة",
+    "back_to_submissions": " ← العودة إلى التقديمات",
+    "expense_details": " تفاصيل النفقة",
+    "documents": " المستندات",
+    "actions": " الإجراءات",
+    "submit_for_review": " تقديم للمراجعة",
+    "back_to_list": " العودة إلى القائمة",
+    "comments": " التعليقات",
+    "expense_type": " نوع النفقة",
+    "title": " العنوان",
+    "amount": " المبلغ",
+    "expense_date": " تاريخ النفقة",
+    "required_documents": " المستندات المطلوبة لـ {type}:",
+    "how_it_works": " كيف يعمل؟",
+    "how_it_works_step1": " حدد نوع النفقة لرؤية المستندات المطلوبة",
+    "how_it_works_step2": " بعد الإنشاء، يمكنك تحميل المستندات الداعمة",
+    "how_it_works_step3": " بمجرد تحميل جميع المستندات، يمكنك تقديم الطلب",
+    "how_it_works_step4": " سيتم إجراء التحليل الذكي للمستندات تلقائيًا",
+    "error": " خطأ",
+    "form": {
+      "expense_type_label": " نوع النفقة *",
+      "expense_type_placeholder": " اختر نوع النفقة",
+      "title_label": " العنوان (اختياري)",
+      "title_placeholder": " مثال: تدريب تطوير الويب",
+      "amount_label": " المبلغ (اختياري)",
+      "amount_placeholder": " 0.00",
+      "expense_date_label": " تاريخ النفقة (اختياري)",
+      "cancel_button": " إلغاء",
+      "creating_button": " جاري الإنشاء...",
+      "create_expense_button": " إنشاء النفقة"
+    },
+    "list": {
+      "type_label": " النوع: {type}",
+      "amount_label": " المبلغ: {amount}",
+      "files_label": " الملفات: {count}",
+      "comments_label": " التعليقات: {count}",
+      "created_label": " تم الإنشاء: {date}",
+      "load_more_button": " تحميل المزيد"
+    },
+    "details": {
+      "created_on": " تم الإنشاء في {date}",
+      "no_documents": " لا توجد مستندات مرفوعة",
+      "ai_analyzed": " تم التحليل بالذكاء الاصطناعي"
+    },
+    "document_types": {
+      "select_document_type": " اختر نوع المستند",
+      "document_type_required": " نوع المستند مطلوب",
+      "FACTURE": " فاتورة",
+      "CONTRAT": " عقد",
+      "RECU": " إيصال",
+      "AUTRE": " أخرى"
+    }
+  }
+}

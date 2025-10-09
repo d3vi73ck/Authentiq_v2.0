@@ -211,6 +211,40 @@
     "how_it_works_step1": "Select the expense type to see required documents",
     "how_it_works_step2": "After creation, you can upload supporting documents",
     "how_it_works_step3": "Once all documents are uploaded, you can submit the request",
-    "how_it_works_step4": "AI analysis of documents will be done automatically"
+    "how_it_works_step4": "AI analysis of documents will be done automatically",
+    "error": "Error",
+    "form": {
+      "expense_type_label": "Expense Type *",
+      "expense_type_placeholder": "Select an expense type",
+      "title_label": "Title (optional)",
+      "title_placeholder": "e.g., Web development training",
+      "amount_label": "Amount (optional)",
+      "amount_placeholder": "0.00",
+      "expense_date_label": "Expense Date (optional)",
+      "cancel_button": "Cancel",
+      "creating_button": "Creating...",
+      "create_expense_button": "Create Expense"
+    },
+    "list": {
+      "type_label": "Type: {type}",
+      "amount_label": "Amount: {amount}",
+      "files_label": "Files: {count}",
+      "comments_label": "Comments: {count}",
+      "created_label": "Created: {date}",
+      "load_more_button": "Load More"
+    },
+    "details": {
+      "created_on": "Created on {date}",
+      "no_documents": "No documents uploaded",
+      "ai_analyzed": "AI Analyzed"
+    },
+    "document_types": {
+      "select_document_type": "Select document type",
+      "document_type_required": "Document type is required",
+      "FACTURE": "Invoice",
+      "CONTRAT": "Contract",
+      "RECU": "Receipt",
+      "AUTRE": "Other"
+    }
   }
 }

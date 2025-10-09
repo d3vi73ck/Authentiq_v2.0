@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { eq, and, desc } from 'drizzle-orm'
+import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
@@ -142,10 +143,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Generate unique ID for comment using CUID2
+    const commentId = createId()
+    
     // Create comment
     const [comment] = await db
       .insert(commentSchema)
       .values({
+        id: commentId,
         submissionId,
         userId,
         text: text.trim()

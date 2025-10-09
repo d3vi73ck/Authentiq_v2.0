@@ -5,6 +5,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { AllLocales } from '@/utils/AppConfig';
+import { getHtmlDir } from '@/utils/rtl';
 
 export const metadata: Metadata = {
   icons: [
@@ -49,8 +50,10 @@ export default function RootLayout(props: {
 
   // The `suppressHydrationWarning` attribute in <body> is used to prevent hydration errors caused by Sentry Overlay,
   // which dynamically adds a `style` attribute to the body tag.
+  const direction = getHtmlDir(props.params.locale);
+
   return (
-    <html lang={props.params.locale} suppressHydrationWarning>
+    <html lang={props.params.locale} dir={direction} suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
         {/* PRO: Dark mode support for Shadcn UI */}
         <NextIntlClientProvider

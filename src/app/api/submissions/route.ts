@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { eq, and, desc, count, sql } from 'drizzle-orm'
+import { eq, and, desc, count } from 'drizzle-orm'
+import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema, commentSchema } from '@/models/Schema'
+import { OrganizationService } from '@/services/organization'
 
 /**
  * GET /api/submissions - List submissions for current organization
@@ -108,44 +110,76 @@ export async function GET(request: NextRequest) {
  * POST /api/submissions - Create new submission
  */
 export async function POST(request: NextRequest) {
+  console.log('🔍 POST /api/submissions - Request received')
+  
   try {
     // Check authentication using Clerk
+    console.log('🔍 Checking authentication...')
     const { userId, orgId } = await auth()
+    console.log('🔍 Auth result:', { userId, orgId })
+    
     if (!userId) {
+      console.log('🔍 Authentication failed: No user ID')
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
     if (!orgId) {
+      console.log('🔍 Authentication failed: No organization ID')
       return NextResponse.json({ error: 'Organization context required' }, { status: 400 })
     }
 
+    console.log('🔍 Authentication successful, parsing request body...')
+    
     // Parse request body
     const body = await request.json()
+    console.log('🔍 Request body:', body)
     const { type, title, amount, spentAt } = body
 
     // Validate required fields
     if (!type) {
+      console.log('🔍 Validation failed: Expense type is required')
       return NextResponse.json({ error: 'Expense type is required' }, { status: 400 })
     }
 
+    console.log('🔍 Ensuring organization exists in local database...')
+    
+    // Ensure organization exists in local database before creating submission
+    await OrganizationService.ensureOrganizationExists(orgId)
+    
+    console.log('🔍 Creating submission in database...')
+    
+    // Generate unique ID using CUID2
+    const submissionId = createId()
+    console.log('🔍 Generated submission ID:', submissionId)
+    
     // Create submission using Drizzle
+    const submissionData = {
+      id: submissionId,
+      organizationId: orgId,
+      type,
+      title: title || null,
+      amount: amount !== undefined && amount !== null ? amount.toString() : null,
+      spentAt: spentAt ? new Date(spentAt) : null,
+      status: 'DRAFT' as const,
+      createdBy: userId
+    }
+    
+    console.log('🔍 Submission data with generated ID:', submissionData)
+    
     const [submission] = await db
       .insert(submissionSchema)
-      .values({
-        organizationId: orgId,
-        type,
-        title: title || null,
-        amount: amount !== undefined && amount !== null ? amount.toString() : null,
-        spentAt: spentAt ? new Date(spentAt) : null,
-        status: 'DRAFT',
-        createdBy: userId
-      })
+      .values(submissionData)
       .returning()
 
+    console.log('🔍 Database insertion result:', submission)
+
     if (!submission) {
+      console.log('🔍 Database insertion failed: No submission returned')
       throw new Error('Failed to create submission')
     }
 
+    console.log('🔍 Submission created successfully, fetching files...')
+    
     // Get files for the submission
     const files = await db
       .select({
@@ -163,10 +197,12 @@ export async function POST(request: NextRequest) {
       files
     }
 
+    console.log('🔍 Returning successful response with submission:', submissionWithFiles.id)
+    
     return NextResponse.json({ submission: submissionWithFiles }, { status: 201 })
 
   } catch (error) {
-    console.error('Create submission error:', error)
+    console.error('🔍 Create submission error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

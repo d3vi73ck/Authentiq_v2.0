@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TitleBar } from '@/features/dashboard/TitleBar'
+import FileDrop from '@/components/uploads/FileDrop'
 
 interface File {
   id: string
@@ -44,6 +45,11 @@ export default function SubmissionDetailsPage() {
   const [submission, setSubmission] = useState<Submission | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
+  const [uploadError, setUploadError] = useState<string>('')
+  const [uploadSuccess, setUploadSuccess] = useState<string>('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string>('')
+  const [submitSuccess, setSubmitSuccess] = useState<string>('')
 
   const submissionId = params.id as string
 
@@ -67,6 +73,87 @@ export default function SubmissionDetailsPage() {
       setError('Failed to load submission')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleFileUploaded = (file: File) => {
+    // Add the new file to the submission's files array
+    if (submission) {
+      setSubmission({
+        ...submission,
+        files: [...submission.files, file]
+      })
+    }
+    setUploadSuccess(`File "${file.objectKey.split('/').pop()}" uploaded successfully`)
+    setUploadError('')
+    
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      setUploadSuccess('')
+    }, 3000)
+  }
+
+  const handleUploadError = (error: string) => {
+    setUploadError(error)
+    setUploadSuccess('')
+    
+    // Clear error message after 5 seconds
+    setTimeout(() => {
+      setUploadError('')
+    }, 5000)
+  }
+
+  const handleSubmitForReview = async () => {
+    if (!submission) return
+    
+    try {
+      setSubmitting(true)
+      setSubmitError('')
+      setSubmitSuccess('')
+      
+      console.log('🔍 Submitting submission for review:', submissionId)
+      
+      const response = await fetch(`/api/submissions/${submissionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'SUBMITTED'
+        })
+      })
+      
+      console.log('🔍 Submit response status:', response.status)
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('🔍 Submit error response:', errorData)
+        throw new Error(errorData.error || 'Failed to submit for review')
+      }
+      
+      const result = await response.json()
+      console.log('🔍 Submit success response:', result)
+      
+      // Update the submission with the new status
+      setSubmission(result.submission)
+      setSubmitSuccess('Submission successfully submitted for review!')
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSubmitSuccess('')
+      }, 3000)
+      
+    } catch (error) {
+      console.error('🔍 Submit for review error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit for review'
+      setSubmitError(errorMessage)
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setSubmitError('')
+      }, 5000)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -126,7 +213,7 @@ export default function SubmissionDetailsPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
+              <h3 className="text-sm font-medium text-red-800">{t('error')}</h3>
               <div className="mt-1 text-sm text-red-700">
                 <p>{error || 'Submission not found'}</p>
               </div>
@@ -148,7 +235,7 @@ export default function SubmissionDetailsPage() {
               {submission.status}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              Created on {formatDate(submission.createdAt)}
+              {t('details.created_on', { date: formatDate(submission.createdAt) })}
             </span>
           </div>
         }
@@ -201,8 +288,41 @@ export default function SubmissionDetailsPage() {
               {t('documents')} ({submission.files.length})
             </h2>
             
+            {/* Upload Messages */}
+            {uploadSuccess && (
+              <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-3">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-green-800">{uploadSuccess}</p>
+                </div>
+              </div>
+            )}
+            
+            {uploadError && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-red-800">{uploadError}</p>
+                </div>
+              </div>
+            )}
+            
+            {/* File Upload Interface */}
+            <div className="mb-6">
+              <FileDrop
+                submissionId={submissionId}
+                onFileUploaded={handleFileUploaded}
+                onUploadError={handleUploadError}
+                disabled={submission.status !== 'DRAFT'}
+              />
+            </div>
+            
             {submission.files.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No documents uploaded</p>
+              <p className="text-sm text-muted-foreground">{t('details.no_documents')}</p>
             ) : (
               <div className="space-y-3">
                 {submission.files.map((file) => (
@@ -222,7 +342,7 @@ export default function SubmissionDetailsPage() {
                     </div>
                     {file.aiData && (
                       <Badge variant="secondary" className="bg-green-100 text-green-800">
-                        AI Analyzed
+                        {t('details.ai_analyzed')}
                       </Badge>
                     )}
                   </div>
@@ -237,13 +357,45 @@ export default function SubmissionDetailsPage() {
           {/* Status Actions */}
           <div className="bg-card shadow-sm border border-border rounded-lg p-6">
             <h3 className="text-lg font-medium text-foreground mb-4">{t('actions')}</h3>
+            
+            {/* Submit Messages */}
+            {submitSuccess && (
+              <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-3">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-green-800">{submitSuccess}</p>
+                </div>
+              </div>
+            )}
+            
+            {submitError && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-red-800">{submitError}</p>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-3">
               {submission.status === 'DRAFT' && submission.files.length > 0 && (
                 <Button
-                  onClick={() => {/* TODO: Implement submit action */}}
+                  onClick={handleSubmitForReview}
+                  disabled={submitting}
                   className="w-full"
                 >
-                  {t('submit_for_review')}
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    t('submit_for_review')
+                  )}
                 </Button>
               )}
               <Button

@@ -211,6 +211,40 @@
     "how_it_works_step1": "Sélectionnez le type de dépense pour voir les documents requis",
     "how_it_works_step2": "Après création, vous pouvez télécharger les documents justificatifs",
     "how_it_works_step3": "Une fois tous les documents téléchargés, vous pouvez soumettre la demande",
-    "how_it_works_step4": "L'analyse IA des documents sera effectuée automatiquement"
+    "how_it_works_step4": "L'analyse IA des documents sera effectuée automatiquement",
+    "error": "Erreur",
+    "form": {
+      "expense_type_label": "Type de Dépense *",
+      "expense_type_placeholder": "Sélectionnez un type de dépense",
+      "title_label": "Titre (optionnel)",
+      "title_placeholder": "ex. : Formation en développement web",
+      "amount_label": "Montant (optionnel)",
+      "amount_placeholder": "0,00",
+      "expense_date_label": "Date de Dépense (optionnelle)",
+      "cancel_button": "Annuler",
+      "creating_button": "Création en cours...",
+      "create_expense_button": "Créer la Dépense"
+    },
+    "list": {
+      "type_label": "Type : {type}",
+      "amount_label": "Montant : {amount}",
+      "files_label": "Fichiers : {count}",
+      "comments_label": "Commentaires : {count}",
+      "created_label": "Créé le : {date}",
+      "load_more_button": "Charger plus"
+    },
+    "details": {
+      "created_on": "Créé le {date}",
+      "no_documents": "Aucun document téléchargé",
+      "ai_analyzed": "Analysé par IA"
+    },
+    "document_types": {
+      "select_document_type": "Sélectionner le type de document",
+      "document_type_required": "Le type de document est requis",
+      "FACTURE": "Facture",
+      "CONTRAT": "Contrat",
+      "RECU": "Reçu",
+      "AUTRE": "Autre"
+    }
   }
 }

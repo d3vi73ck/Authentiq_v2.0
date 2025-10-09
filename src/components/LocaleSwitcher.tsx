@@ -13,6 +13,13 @@ import {
 import { usePathname, useRouter } from '@/libs/i18nNavigation';
 import { AppConfig } from '@/utils/AppConfig';
 
+// Flag mapping for each language
+const flagMap: Record<string, string> = {
+  en: '🇺🇸',
+  fr: '🇫🇷',
+  ar: '🇲🇦',
+};
+
 export const LocaleSwitcher = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -45,7 +52,10 @@ export const LocaleSwitcher = () => {
         <DropdownMenuRadioGroup value={locale} onValueChange={handleChange}>
           {AppConfig.locales.map(elt => (
             <DropdownMenuRadioItem key={elt.id} value={elt.id}>
-              {elt.name}
+              <span className="flex items-center gap-2">
+                <span className="text-lg">{flagMap[elt.id]}</span>
+                {elt.name}
+              </span>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

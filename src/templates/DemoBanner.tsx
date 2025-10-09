@@ -4,7 +4,7 @@ import { StickyBanner } from '@/features/landing/StickyBanner';
 
 export const DemoBanner = () => (
   <StickyBanner>
-    Findirou - 
+    KifNdirou - 
     {' '}
     <Link href="/sign-up">Explore the User Dashboard</Link>
   </StickyBanner>

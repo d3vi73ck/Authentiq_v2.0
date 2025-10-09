@@ -34,6 +34,8 @@ export default function NewSubmissionPage() {
         spentAt: formData.spentAt || undefined
       }
 
+      console.log('🔍 Frontend: Making POST request to /api/submissions with data:', submitData)
+      
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: {
@@ -42,15 +44,20 @@ export default function NewSubmissionPage() {
         body: JSON.stringify(submitData),
       })
 
+      console.log('🔍 Frontend: Response status:', response.status, response.statusText)
+      console.log('🔍 Frontend: Response headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
         const errorData = await response.json()
+        console.log('🔍 Frontend: Error response data:', errorData)
         throw new Error(errorData.error || 'Failed to create expense submission')
       }
 
       const result = await response.json()
+      console.log('🔍 Frontend: Success response data:', result)
       router.push(`/submissions/${result.submission.id}`)
     } catch (error) {
-      console.error('Create submission error:', error)
+      console.error('🔍 Frontend: Create submission error:', error)
       setError(error instanceof Error ? error.message : 'An unexpected error occurred')
     } finally {
       setIsSubmitting(false)
@@ -88,7 +95,7 @@ export default function NewSubmissionPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
+              <h3 className="text-sm font-medium text-red-800">{t('error')}</h3>
               <div className="mt-1 text-sm text-red-700">
                 <p>{error}</p>
               </div>
@@ -103,7 +110,7 @@ export default function NewSubmissionPage() {
           {/* Expense Type */}
           <div>
             <Label htmlFor="type" className="mb-2">
-              Expense Type *
+              {t('form.expense_type_label')}
             </Label>
             <select
               id="type"
@@ -112,7 +119,7 @@ export default function NewSubmissionPage() {
               required
               className="w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
             >
-              <option value="">Select an expense type</option>
+              <option value="">{t('form.expense_type_placeholder')}</option>
               {Object.entries(expenseTypes).map(([key, expenseType]) => (
                 <option key={key} value={key}>
                   {expenseType.label}
@@ -124,21 +131,21 @@ export default function NewSubmissionPage() {
           {/* Title */}
           <div>
             <Label htmlFor="title" className="mb-2">
-              Title (optional)
+              {t('form.title_label')}
             </Label>
             <Input
               type="text"
               id="title"
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="e.g., Web development training"
+              placeholder={t('form.title_placeholder')}
             />
           </div>
 
           {/* Amount */}
           <div>
             <Label htmlFor="amount" className="mb-2">
-              Amount (optional)
+              {t('form.amount_label')}
             </Label>
             <div className="relative">
               <Input
@@ -148,7 +155,7 @@ export default function NewSubmissionPage() {
                 onChange={(e) => handleChange('amount', e.target.value)}
                 step="0.01"
                 min="0"
-                placeholder="0.00"
+                placeholder={t('form.amount_placeholder')}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <span className="text-muted-foreground">€</span>
@@ -159,7 +166,7 @@ export default function NewSubmissionPage() {
           {/* Date */}
           <div>
             <Label htmlFor="spentAt" className="mb-2">
-              Expense Date (optional)
+              {t('form.expense_date_label')}
             </Label>
             <Input
               type="date"
@@ -196,13 +203,13 @@ export default function NewSubmissionPage() {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('form.cancel_button')}
             </Button>
             <Button
               type="submit"
               disabled={!formData.type || isSubmitting}
             >
-              {isSubmitting ? 'Creating...' : 'Create Expense'}
+              {isSubmitting ? t('form.creating_button') : t('form.create_expense_button')}
             </Button>
           </div>
         </form>

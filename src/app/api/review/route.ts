@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { eq, and, desc, count, inArray } from 'drizzle-orm'
+import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
@@ -217,10 +218,14 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to update submission')
       }
 
+      // Generate unique ID for comment using CUID2
+      const commentId = createId()
+      
       // Create review comment with decision
       const [reviewComment] = await tx
         .insert(commentSchema)
         .values({
+          id: commentId,
           submissionId,
           userId,
           text: comment,
