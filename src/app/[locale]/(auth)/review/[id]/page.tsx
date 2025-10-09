@@ -13,6 +13,23 @@ interface File {
   size: number
   mime: string
   createdAt: string
+  aiData?: {
+    analysis: {
+      amount?: number
+      currency?: string
+      date?: string
+      supplier?: string
+      documentType?: string
+      confidence?: number
+      rawText?: string
+    }
+    metadata: {
+      analyzedBy?: string
+      organizationId?: string
+      analyzedAt?: string
+      confidence?: number
+    }
+  }
 }
 
 interface Comment {
@@ -98,11 +115,41 @@ export default function ReviewDetailPage() {
       }
       
       setSubmission(data.submission)
+      
+      // Auto-update status to IN_REVIEW if it's SUBMITTED
+      if (data.submission.status === 'SUBMITTED') {
+        await updateSubmissionStatus('IN_REVIEW')
+      }
     } catch (err) {
       console.error('Error fetching submission:', err)
       setError(err instanceof Error ? err.message : 'Error loading submission')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const updateSubmissionStatus = async (status: string) => {
+    try {
+      const response = await fetch(`/api/submissions/${submissionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: status
+        })
+      })
+      
+      if (!response.ok) {
+        console.error('Failed to update submission status')
+        return
+      }
+      
+      // Refresh submission data to get updated status
+      const updatedData = await response.json()
+      setSubmission(updatedData.submission)
+    } catch (error) {
+      console.error('Error updating submission status:', error)
     }
   }
 

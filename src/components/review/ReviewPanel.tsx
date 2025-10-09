@@ -15,6 +15,23 @@ interface File {
   size: number
   mime: string
   createdAt: string
+  aiData?: {
+    analysis: {
+      amount?: number
+      currency?: string
+      date?: string
+      supplier?: string
+      documentType?: string
+      confidence?: number
+      rawText?: string
+    }
+    metadata: {
+      analyzedBy?: string
+      organizationId?: string
+      analyzedAt?: string
+      confidence?: number
+    }
+  }
 }
 
 interface Comment {
@@ -183,34 +200,93 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
         </div>
       </div>
 
-      {/* Files Section */}
+      {/* Files Section with AI Analysis */}
       {submission.files.length > 0 && (
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-sm font-medium text-muted-foreground mb-3">Attached Documents</h3>
-          <div className="space-y-2">
+          <div className="space-y-4">
             {submission.files.map((file) => (
-              <div key={file.id} className="flex items-center justify-between p-3 bg-muted rounded">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                    <span className="text-primary text-xs font-medium">
-                      {file.kind.charAt(0)}
-                    </span>
+              <div key={file.id} className="border border-border rounded-lg overflow-hidden">
+                {/* File Header */}
+                <div className="flex items-center justify-between p-3 bg-muted">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                      <span className="text-primary text-xs font-medium">
+                        {file.kind.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{file.kind}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB • {file.mime}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{file.kind}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB • {file.mime}
-                    </p>
-                  </div>
+                  <a
+                    href={`/api/files/${file.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:text-primary/80"
+                  >
+                    View
+                  </a>
                 </div>
-                <a
-                  href={`/api/files/${file.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  View
-                </a>
+                
+                {/* AI Analysis Results */}
+                {file.aiData && (
+                  <div className="p-3 bg-blue-50 border-t border-blue-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-blue-800">AI Analysis</h4>
+                      {file.aiData.metadata.confidence && (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                          Confidence: {Math.round(file.aiData.metadata.confidence * 100)}%
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      {file.aiData.analysis.documentType && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Document Type:</span>
+                          <span className="ml-1 text-blue-900">{file.aiData.analysis.documentType}</span>
+                        </div>
+                      )}
+                      {file.aiData.analysis.amount && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Amount:</span>
+                          <span className="ml-1 text-blue-900">
+                            {file.aiData.analysis.amount} {file.aiData.analysis.currency || 'EUR'}
+                          </span>
+                        </div>
+                      )}
+                      {file.aiData.analysis.date && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Date:</span>
+                          <span className="ml-1 text-blue-900">{file.aiData.analysis.date}</span>
+                        </div>
+                      )}
+                      {file.aiData.analysis.supplier && (
+                        <div>
+                          <span className="text-blue-700 font-medium">Supplier:</span>
+                          <span className="ml-1 text-blue-900">{file.aiData.analysis.supplier}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {file.aiData.metadata.analyzedAt && (
+                      <p className="text-xs text-blue-600 mt-2">
+                        Analyzed on {formatDate(file.aiData.metadata.analyzedAt)}
+                      </p>
+                    )}
+                  </div>
+                )}
+                
+                {/* No AI Analysis Message */}
+                {!file.aiData && (
+                  <div className="p-3 bg-gray-50 border-t border-gray-200">
+                    <p className="text-sm text-gray-600">No AI analysis available for this document</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

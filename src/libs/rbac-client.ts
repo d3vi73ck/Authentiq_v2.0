@@ -22,12 +22,8 @@ export function useCanReview(): boolean {
   
   if (!isLoaded || !user) return false
   
-  // In a real implementation, you would check user metadata from Clerk
-  // For now, we'll use a placeholder - you should implement this based on your Clerk setup
-  // const role = user.publicMetadata?.role as UserRole || 'user'
-  
-  // Placeholder implementation - replace with actual Clerk metadata lookup
-  const role: UserRole = 'user' // Default to user role
+  // Retrieve role from Clerk user metadata, default to 'user' if not set
+  const role: UserRole = (user.publicMetadata?.role as UserRole) || 'user'
   
   const reviewRoles: UserRole[] = ['chef', 'admin', 'superadmin']
   return reviewRoles.includes(role)

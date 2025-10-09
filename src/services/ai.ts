@@ -14,12 +14,26 @@ export interface ExpenseData {
   rawText?: string;
 }
 
+export interface AnalysisMetadata {
+  analyzedBy: string;
+  organizationId: string;
+  analyzedAt: string;
+  confidence: number;
+  method: 'ai' | 'regex';
+}
+
 export interface DocumentAnalysisResult {
   success: boolean;
   data: ExpenseData;
+  metadata: AnalysisMetadata;
   error?: string;
   processingTime?: number;
   method: 'ai' | 'regex';
+}
+
+export interface AIDataStorage {
+  analysis: ExpenseData;
+  metadata: AnalysisMetadata;
 }
 
 /**
@@ -27,12 +41,16 @@ export interface DocumentAnalysisResult {
  * @param fileBuffer - The file buffer to analyze
  * @param mimeType - The MIME type of the file
  * @param filename - The original filename
+ * @param userId - The user ID who triggered the analysis
+ * @param organizationId - The organization ID
  * @returns Promise resolving to document analysis result
  */
 export async function analyzeDocument(
   fileBuffer: Buffer,
   mimeType: string,
-  filename: string
+  filename: string,
+  userId?: string,
+  organizationId?: string
 ): Promise<DocumentAnalysisResult> {
   const startTime = Date.now();
   
@@ -41,8 +59,17 @@ export async function analyzeDocument(
     if (process.env.OPENAI_API_KEY) {
       const aiResult = await analyzeWithOpenAI(fileBuffer, mimeType, filename);
       if (aiResult.success) {
+        const metadata: AnalysisMetadata = {
+          analyzedBy: userId || 'system',
+          organizationId: organizationId || 'unknown',
+          analyzedAt: new Date().toISOString(),
+          confidence: aiResult.data.confidence,
+          method: 'ai'
+        };
+        
         return {
           ...aiResult,
+          metadata,
           processingTime: Date.now() - startTime,
           method: 'ai'
         };
@@ -51,14 +78,31 @@ export async function analyzeDocument(
 
     // Fallback to regex parsing
     const regexResult = await analyzeWithRegex(fileBuffer, mimeType, filename);
+    const metadata: AnalysisMetadata = {
+      analyzedBy: userId || 'system',
+      organizationId: organizationId || 'unknown',
+      analyzedAt: new Date().toISOString(),
+      confidence: regexResult.data.confidence,
+      method: 'regex'
+    };
+    
     return {
       ...regexResult,
+      metadata,
       processingTime: Date.now() - startTime,
       method: 'regex'
     };
 
   } catch (error) {
     console.error('Document analysis error:', error);
+    const metadata: AnalysisMetadata = {
+      analyzedBy: userId || 'system',
+      organizationId: organizationId || 'unknown',
+      analyzedAt: new Date().toISOString(),
+      confidence: 0,
+      method: 'regex'
+    };
+    
     return {
       success: false,
       data: {
@@ -69,6 +113,7 @@ export async function analyzeDocument(
         documentType: null,
         confidence: 0
       },
+      metadata,
       error: error instanceof Error ? error.message : 'Unknown error occurred',
       processingTime: Date.now() - startTime,
       method: 'regex'
@@ -150,6 +195,7 @@ async function analyzeWithOpenAI(
     }
 
     const parsedData = JSON.parse(content);
+    const confidence = Math.min(Math.max(parsedData.confidence || 0.5, 0), 1);
     
     return {
       success: true,
@@ -159,8 +205,15 @@ async function analyzeWithOpenAI(
         date: parsedData.date || null,
         supplier: parsedData.supplier || null,
         documentType: parsedData.documentType || null,
-        confidence: Math.min(Math.max(parsedData.confidence || 0.5, 0), 1),
+        confidence,
         rawText: parsedData.rawText
+      },
+      metadata: {
+        analyzedBy: 'system',
+        organizationId: 'unknown',
+        analyzedAt: new Date().toISOString(),
+        confidence,
+        method: 'ai'
       },
       method: 'ai'
     };
@@ -187,6 +240,7 @@ async function analyzeWithRegex(
   // In a real implementation, you would use a PDF/text extraction library here
   
   const documentType = determineDocumentTypeFromFilename(filename);
+  const confidence = 0.3; // Low confidence for regex fallback
   
   return {
     success: true,
@@ -196,7 +250,14 @@ async function analyzeWithRegex(
       date: null,
       supplier: null,
       documentType,
-      confidence: 0.3 // Low confidence for regex fallback
+      confidence
+    },
+    metadata: {
+      analyzedBy: 'system',
+      organizationId: 'unknown',
+      analyzedAt: new Date().toISOString(),
+      confidence,
+      method: 'regex'
     },
     method: 'regex'
   };
@@ -245,17 +306,33 @@ export function getSupportedLanguages(): string[] {
 /**
  * Processes multiple documents in batch
  * @param documents - Array of documents to process
+ * @param userId - The user ID who triggered the analysis
+ * @param organizationId - The organization ID
  * @returns Promise resolving to array of analysis results
  */
 export async function processDocumentsBatch(
-  documents: Array<{ buffer: Buffer; mimeType: string; filename: string }>
+  documents: Array<{ buffer: Buffer; mimeType: string; filename: string }>,
+  userId?: string,
+  organizationId?: string
 ): Promise<DocumentAnalysisResult[]> {
   const results: DocumentAnalysisResult[] = [];
   
   for (const doc of documents) {
-    const result = await analyzeDocument(doc.buffer, doc.mimeType, doc.filename);
+    const result = await analyzeDocument(doc.buffer, doc.mimeType, doc.filename, userId, organizationId);
     results.push(result);
   }
   
   return results;
+}
+
+/**
+ * Formats analysis result for database storage
+ * @param result - The analysis result
+ * @returns Formatted data for aiData field
+ */
+export function formatForStorage(result: DocumentAnalysisResult): AIDataStorage {
+  return {
+    analysis: result.data,
+    metadata: result.metadata
+  };
 }
