@@ -5,6 +5,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
+import { fetchMultipleUsersInfo } from '@/utils/user-utils'
 
 /**
  * GET /api/review - List submissions pending review for current organization
@@ -55,6 +56,26 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .offset(offset)
 
+    // Get all user IDs from submissions and comments
+    const userIds = new Set<string>()
+    submissions.forEach(submission => userIds.add(submission.createdBy))
+    
+    // Get all comments to collect comment user IDs
+    const allComments = await Promise.all(
+      submissions.map(submission =>
+        db
+          .select({
+            userId: commentSchema.userId,
+          })
+          .from(commentSchema)
+          .where(eq(commentSchema.submissionId, submission.id))
+      )
+    )
+    
+    allComments.flat().forEach(comment => userIds.add(comment.userId))
+    
+    const userMap = await fetchMultipleUsersInfo(Array.from(userIds))
+
     // Get files and comments for each submission
     const submissionsWithRelations = await Promise.all(
       submissions.map(async (submission) => {
@@ -84,13 +105,11 @@ export async function GET(request: NextRequest) {
         return {
           ...submission,
           files,
-          comments,
-          user: {
-            id: submission.createdBy,
-            // In a real implementation, you would fetch user details from Clerk
-            email: 'user@example.com', // Placeholder
-            role: 'user' // Placeholder
-          }
+          comments: comments.map(comment => ({
+            ...comment,
+            user: userMap[comment.userId]
+          })),
+          user: userMap[submission.createdBy]
         }
       })
     )
@@ -256,20 +275,29 @@ export async function POST(request: NextRequest) {
         .where(eq(commentSchema.submissionId, submissionId))
         .orderBy(commentSchema.createdAt)
 
+      // Get user information for submission creator and comments
+      const userIds = new Set<string>()
+      userIds.add(updated.createdBy)
+      comments.forEach(comment => userIds.add(comment.userId))
+      
+      const userMap = await fetchMultipleUsersInfo(Array.from(userIds))
+
       return {
         ...updated,
         files,
-        comments,
-        user: {
-          id: updated.createdBy,
-          // In a real implementation, you would fetch user details from Clerk
-          email: 'user@example.com', // Placeholder
-          role: 'user' // Placeholder
-        }
+        comments: comments.map(comment => ({
+          ...comment,
+          user: userMap[comment.userId]
+        })),
+        user: userMap[updated.createdBy]
       }
     })
 
     // TODO: Send email notification (placeholder for later implementation)
+
+    // Get reviewer user information
+    const reviewerUserInfo = await fetchMultipleUsersInfo([userId])
+    const reviewer = reviewerUserInfo[userId]
 
     return NextResponse.json({
       submission: updatedSubmission,
@@ -280,9 +308,8 @@ export async function POST(request: NextRequest) {
         createdAt: new Date().toISOString(),
         user: {
           id: userId,
-          // In a real implementation, you would fetch user details from Clerk
-          email: 'reviewer@example.com', // Placeholder
-          role: 'reviewer' // Placeholder
+          email: reviewer?.email || 'Unknown User',
+          role: 'reviewer'
         }
       }
     }, { status: 200 })

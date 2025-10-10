@@ -14,7 +14,6 @@ import { logger } from '@/libs/Logger'
  * - processAI: Whether to perform AI analysis (default: true)
  */
 export async function POST(request: NextRequest) {
-  const startTime = Date.now()
   const requestId = `analyze-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   
   try {
@@ -123,14 +122,18 @@ export async function POST(request: NextRequest) {
         const aiResult = await analyzeDocument(fileBuffer, fileRecord.mime, fileRecord.objectKey, userId, orgId)
         results.ai = aiResult
 
-        logger.info({ requestId, success: aiResult.success, method: aiResult.method, confidence: aiResult.data?.confidence, processingTime: aiResult.processingTime }, 'AI analysis completed')
+        logger.info({ requestId, success: aiResult.success, confidence: aiResult.data?.confidence, processingTime: aiResult.processingTime }, 'AI analysis completed')
 
         // Update file record with AI data if successful
         if (aiResult.success) {
           logger.debug({ requestId }, 'Updating file record with AI data')
+          // Use the formatForStorage function to create proper AIDataStorage structure
+          const { formatForStorage } = await import('@/services/ai')
+          const aiDataStorage = formatForStorage(aiResult)
+          
           await db
             .update(fileSchema)
-            .set({ aiData: aiResult.data })
+            .set({ aiData: aiDataStorage })
             .where(eq(fileSchema.id, fileId))
           logger.debug({ requestId }, 'File record updated with AI data')
         } else {

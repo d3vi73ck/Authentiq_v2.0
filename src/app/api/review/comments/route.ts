@@ -5,6 +5,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
+import { fetchMultipleUsersInfo } from '@/utils/user-utils'
 
 /**
  * GET /api/review/comments - Get comments for a submission
@@ -59,15 +60,13 @@ export async function GET(request: NextRequest) {
       .where(eq(commentSchema.submissionId, submissionId))
       .orderBy(desc(commentSchema.createdAt))
 
-    // Add user information to comments (placeholder - in real implementation, fetch from Clerk)
+    // Get user information for comments
+    const userIds = comments.map(comment => comment.userId)
+    const userMap = await fetchMultipleUsersInfo(userIds)
+
     const commentsWithUsers = comments.map(comment => ({
       ...comment,
-      user: {
-        id: comment.userId,
-        // In a real implementation, you would fetch user details from Clerk
-        email: 'user@example.com', // Placeholder
-        role: 'user' // Placeholder
-      }
+      user: userMap[comment.userId]
     }))
 
     return NextResponse.json({ comments: commentsWithUsers })
@@ -161,14 +160,16 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to create comment')
     }
 
-    // Add user information to comment (placeholder - in real implementation, fetch from Clerk)
+    // Get user information for comment author
+    const userMap = await fetchMultipleUsersInfo([userId])
+    const user = userMap[userId]
+
     const commentWithUser = {
       ...comment,
       user: {
         id: userId,
-        // In a real implementation, you would fetch user details from Clerk
-        email: 'user@example.com', // Placeholder
-        role: canUserReview ? 'reviewer' : 'user' // Placeholder
+        email: user?.email || 'Unknown User',
+        role: canUserReview ? 'reviewer' : 'user'
       }
     }
 

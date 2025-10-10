@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema, commentSchema } from '@/models/Schema'
+import { fetchUserInfo, fetchMultipleUsersInfo } from '@/utils/user-utils'
 
 interface RouteParams {
   params: {
@@ -59,21 +60,20 @@ export async function GET(
       .where(eq(commentSchema.submissionId, submissionId))
       .orderBy(commentSchema.createdAt)
 
+    // Get user information for submission creator and comments
+    const userIds = new Set<string>()
+    userIds.add(submission.createdBy)
+    comments.forEach(comment => userIds.add(comment.userId))
+    
+    const userMap = await fetchMultipleUsersInfo(Array.from(userIds))
+
     // Get user information for submission creator
-    let user = {
-      id: submission.createdBy,
-      email: 'Unknown User',
-      role: 'user'
-    }
+    const user = userMap[submission.createdBy]
 
     // Get user information for comments
     const commentsWithUsers = comments.map((comment) => ({
       ...comment,
-      user: {
-        id: comment.userId,
-        email: 'Unknown User',
-        role: 'user'
-      }
+      user: userMap[comment.userId]
     }))
 
     const submissionWithRelations = {
@@ -170,21 +170,20 @@ export async function PATCH(
       .where(eq(commentSchema.submissionId, submissionId))
       .orderBy(commentSchema.createdAt)
 
+    // Get user information for submission creator and comments
+    const userIds = new Set<string>()
+    userIds.add(updatedSubmission.createdBy)
+    comments.forEach(comment => userIds.add(comment.userId))
+    
+    const userMap = await fetchMultipleUsersInfo(Array.from(userIds))
+
     // Get user information for submission creator
-    let user = {
-      id: updatedSubmission.createdBy,
-      email: 'Unknown User',
-      role: 'user'
-    }
+    const user = userMap[updatedSubmission.createdBy]
 
     // Get user information for comments
     const commentsWithUsers = comments.map((comment) => ({
       ...comment,
-      user: {
-        id: comment.userId,
-        email: 'Unknown User',
-        role: 'user'
-      }
+      user: userMap[comment.userId]
     }))
 
     const submissionWithRelations = {

@@ -1,4 +1,4 @@
-# Authentiq Project Memory
+han# Authentiq Project Memory
 
 ## Project Overview
 
@@ -409,6 +409,9 @@ const roleMapping: Record<string, UserRole> = {
 - ✅ **Permission consistency between navigation and page access**
 - ✅ **Mobile responsiveness patterns and fixes**
 - ✅ **Navigation menu organization and UX patterns**
+- ✅ **PDF-to-image conversion for OpenAI Vision API compatibility**
+- ✅ **File type validation with clear error messages**
+- ✅ **OpenAI API 400 Bad Request error resolution**
 
 ### In Progress
 - 🔄 AI document analysis integration
@@ -423,6 +426,31 @@ const roleMapping: Record<string, UserRole> = {
 - 📋 Audit trail and compliance reporting
 - 📋 Mobile application
 
+## Recent Technical Fixes
+
+### OpenAI API 400 Bad Request Error Resolution
+
+**Problem**: OpenAI Vision API was returning "400 Bad Request - Invalid MIME type. Only image types are supported" when processing PDF files.
+
+**Root Cause**: The system was attempting to send PDF files directly to OpenAI Vision API, which only accepts image formats (JPEG, PNG, GIF, WEBP).
+
+**Solution Implemented**:
+1. **PDF-to-Image Conversion**: Added automatic conversion of PDF documents to JPEG images using the `sharp` library
+2. **File Type Detection**: Enhanced MIME type validation with clear error messages for unsupported file types
+3. **Fallback Processing**: Graceful handling of conversion failures with fallback to direct PDF processing
+4. **Error Handling**: Comprehensive error logging and user-friendly error messages
+
+**Technical Implementation**:
+- **Conversion Function**: [`convertPdfToImage()`](src/services/ai.ts:174) function using sharp with 150 DPI and 80% quality
+- **Processing Logic**: PDF files are automatically converted to JPEG before being sent to OpenAI Vision API
+- **Validation**: Enhanced file type validation with clear error messages for unsupported types
+- **Logging**: Comprehensive logging for conversion success/failure and processing details
+
+**Supported File Types**:
+- **Images**: JPEG, JPG, PNG, GIF, WEBP (processed directly)
+- **Documents**: PDF (automatically converted to JPEG)
+- **Unsupported**: All other file types with clear error messages
+
 ## Lessons Learned & Best Practices
 
 ### Multi-Tenant Security
@@ -435,6 +463,9 @@ const roleMapping: Record<string, UserRole> = {
 - Use background processing for OCR/AI to avoid blocking requests
 - Implement proper file validation and sanitization
 - Store processing results for future reference
+- **PDF-to-Image Conversion**: Automatic conversion of PDF documents to JPEG images for OpenAI Vision API compatibility
+- **File Type Detection**: Comprehensive MIME type validation with clear error messages
+- **Fallback Processing**: Graceful handling of conversion failures with fallback to direct processing
 
 ### Performance Considerations
 - Implement pagination for large datasets

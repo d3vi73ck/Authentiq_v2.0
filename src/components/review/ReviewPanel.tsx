@@ -30,6 +30,36 @@ interface File {
       organizationId?: string
       analyzedAt?: string
       confidence?: number
+      method?: string
+      model?: string
+      processingTime?: number
+      analysisId?: string
+    }
+    rawResponse?: any
+    enhancedAnalysis?: {
+      fields: {
+        amount?: number
+        currency?: string
+        date?: string
+        supplier?: string
+        documentType?: string
+        confidence?: number
+        rawText?: string
+      }
+      commentary?: {
+        observations?: string[]
+        confidenceAssessment?: string
+        potentialIssues?: string[]
+        recommendations?: string[]
+        overallAssessment?: string
+      }
+      fieldConfidences?: {
+        amount?: number
+        currency?: number
+        date?: number
+        supplier?: number
+        documentType?: number
+      }
     }
   }
 }
@@ -192,6 +222,44 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
 
   const isAnalyzing = (fileId: string) => analyzingFiles.has(fileId)
 
+  // Helper function to safely access AI data with fallbacks
+  const getAIData = (file: File) => {
+    if (!file.aiData) return null
+    
+    // Handle both old and new AI data structures
+    const analysis = file.aiData.analysis || file.aiData
+    const metadata = file.aiData.metadata || {}
+    const enhancedAnalysis = file.aiData.enhancedAnalysis
+    
+    return {
+      analysis: {
+        amount: analysis?.amount,
+        currency: analysis?.currency,
+        date: analysis?.date,
+        supplier: analysis?.supplier,
+        documentType: analysis?.documentType,
+        confidence: analysis?.confidence,
+        rawText: analysis?.rawText
+      },
+      metadata: {
+        analyzedBy: metadata?.analyzedBy,
+        organizationId: metadata?.organizationId,
+        analyzedAt: metadata?.analyzedAt,
+        confidence: metadata?.confidence,
+        method: metadata?.method,
+        model: metadata?.model,
+        processingTime: metadata?.processingTime,
+        analysisId: metadata?.analysisId
+      },
+      enhancedAnalysis: enhancedAnalysis ? {
+        fields: enhancedAnalysis.fields || analysis,
+        commentary: enhancedAnalysis.commentary,
+        fieldConfidences: enhancedAnalysis.fieldConfidences
+      } : undefined,
+      rawResponse: file.aiData.rawResponse
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     const colors = {
       DRAFT: 'bg-gray-100 text-gray-800',
@@ -287,53 +355,177 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
                 </div>
                 
                 {/* AI Analysis Results */}
-                {file.aiData && (
-                  <div className="p-3 bg-blue-50 border-t border-blue-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-sm font-medium text-blue-800">AI Analysis</h4>
-                      {file.aiData.metadata.confidence && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
-                          Confidence: {Math.round(file.aiData.metadata.confidence * 100)}%
-                        </Badge>
+                {(() => {
+                  const aiData = getAIData(file)
+                  if (!aiData) return null
+                  
+                  return (
+                    <div className="p-3 bg-blue-50 border-t border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-medium text-blue-800">AI Analysis</h4>
+                        <div className="flex items-center space-x-2">
+                          {aiData.metadata.model && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                              {aiData.metadata.model}
+                            </Badge>
+                          )}
+                          {(aiData.metadata.confidence || aiData.analysis.confidence) && (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
+                              Confidence: {Math.round((aiData.metadata.confidence || aiData.analysis.confidence || 0) * 100)}%
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Enhanced Analysis with Field Confidences */}
+                      {aiData.enhancedAnalysis && (
+                        <div className="mb-3">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            {aiData.enhancedAnalysis.fields.documentType && (
+                              <div>
+                                <span className="text-blue-700 font-medium">Document Type:</span>
+                                <span className="ml-1 text-blue-900">
+                                  {aiData.enhancedAnalysis.fields.documentType}
+                                  {aiData.enhancedAnalysis.fieldConfidences?.documentType && (
+                                    <span className="text-xs text-blue-600 ml-1">
+                                      ({Math.round(aiData.enhancedAnalysis.fieldConfidences.documentType * 100)}%)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                            {aiData.enhancedAnalysis.fields.amount && (
+                              <div>
+                                <span className="text-blue-700 font-medium">Amount:</span>
+                                <span className="ml-1 text-blue-900">
+                                  {aiData.enhancedAnalysis.fields.amount} {aiData.enhancedAnalysis.fields.currency || 'EUR'}
+                                  {aiData.enhancedAnalysis.fieldConfidences?.amount && (
+                                    <span className="text-xs text-blue-600 ml-1">
+                                      ({Math.round(aiData.enhancedAnalysis.fieldConfidences.amount * 100)}%)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                            {aiData.enhancedAnalysis.fields.date && (
+                              <div>
+                                <span className="text-blue-700 font-medium">Date:</span>
+                                <span className="ml-1 text-blue-900">
+                                  {aiData.enhancedAnalysis.fields.date}
+                                  {aiData.enhancedAnalysis.fieldConfidences?.date && (
+                                    <span className="text-xs text-blue-600 ml-1">
+                                      ({Math.round(aiData.enhancedAnalysis.fieldConfidences.date * 100)}%)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                            {aiData.enhancedAnalysis.fields.supplier && (
+                              <div>
+                                <span className="text-blue-700 font-medium">Supplier:</span>
+                                <span className="ml-1 text-blue-900">
+                                  {aiData.enhancedAnalysis.fields.supplier}
+                                  {aiData.enhancedAnalysis.fieldConfidences?.supplier && (
+                                    <span className="text-xs text-blue-600 ml-1">
+                                      ({Math.round(aiData.enhancedAnalysis.fieldConfidences.supplier * 100)}%)
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* AI Commentary */}
+                          {aiData.enhancedAnalysis.commentary && (
+                            <div className="mt-3 p-2 bg-blue-100 rounded border border-blue-200">
+                              <h5 className="text-xs font-medium text-blue-800 mb-1">AI Commentary</h5>
+                              {aiData.enhancedAnalysis.commentary.overallAssessment && (
+                                <p className="text-xs text-blue-700 mb-2">
+                                  <strong>Overall:</strong> {aiData.enhancedAnalysis.commentary.overallAssessment}
+                                </p>
+                              )}
+                              {aiData.enhancedAnalysis.commentary.observations && aiData.enhancedAnalysis.commentary.observations.length > 0 && (
+                                <div className="mb-1">
+                                  <p className="text-xs text-blue-700 font-medium">Observations:</p>
+                                  <ul className="text-xs text-blue-700 list-disc list-inside">
+                                    {aiData.enhancedAnalysis.commentary.observations.map((obs, index) => (
+                                      <li key={index}>{obs}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {aiData.enhancedAnalysis.commentary.potentialIssues && aiData.enhancedAnalysis.commentary.potentialIssues.length > 0 && (
+                                <div className="mb-1">
+                                  <p className="text-xs text-blue-700 font-medium">Potential Issues:</p>
+                                  <ul className="text-xs text-blue-700 list-disc list-inside">
+                                    {aiData.enhancedAnalysis.commentary.potentialIssues.map((issue, index) => (
+                                      <li key={index}>{issue}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {aiData.enhancedAnalysis.commentary.recommendations && aiData.enhancedAnalysis.commentary.recommendations.length > 0 && (
+                                <div>
+                                  <p className="text-xs text-blue-700 font-medium">Recommendations:</p>
+                                  <ul className="text-xs text-blue-700 list-disc list-inside">
+                                    {aiData.enhancedAnalysis.commentary.recommendations.map((rec, index) => (
+                                      <li key={index}>{rec}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       )}
+                      
+                      {/* Fallback to basic analysis if no enhanced data */}
+                      {!aiData.enhancedAnalysis && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          {aiData.analysis.documentType && (
+                            <div>
+                              <span className="text-blue-700 font-medium">Document Type:</span>
+                              <span className="ml-1 text-blue-900">{aiData.analysis.documentType}</span>
+                            </div>
+                          )}
+                          {aiData.analysis.amount && (
+                            <div>
+                              <span className="text-blue-700 font-medium">Amount:</span>
+                              <span className="ml-1 text-blue-900">
+                                {aiData.analysis.amount} {aiData.analysis.currency || 'EUR'}
+                              </span>
+                            </div>
+                          )}
+                          {aiData.analysis.date && (
+                            <div>
+                              <span className="text-blue-700 font-medium">Date:</span>
+                              <span className="ml-1 text-blue-900">{aiData.analysis.date}</span>
+                            </div>
+                          )}
+                          {aiData.analysis.supplier && (
+                            <div>
+                              <span className="text-blue-700 font-medium">Supplier:</span>
+                              <span className="ml-1 text-blue-900">{aiData.analysis.supplier}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-center mt-2">
+                        {aiData.metadata.analyzedAt && (
+                          <p className="text-xs text-blue-600">
+                            Analyzed on {formatDate(aiData.metadata.analyzedAt)}
+                          </p>
+                        )}
+                        {aiData.metadata.processingTime && (
+                          <p className="text-xs text-blue-600">
+                            Processing: {aiData.metadata.processingTime}ms
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                      {file.aiData.analysis.documentType && (
-                        <div>
-                          <span className="text-blue-700 font-medium">Document Type:</span>
-                          <span className="ml-1 text-blue-900">{file.aiData.analysis.documentType}</span>
-                        </div>
-                      )}
-                      {file.aiData.analysis.amount && (
-                        <div>
-                          <span className="text-blue-700 font-medium">Amount:</span>
-                          <span className="ml-1 text-blue-900">
-                            {file.aiData.analysis.amount} {file.aiData.analysis.currency || 'EUR'}
-                          </span>
-                        </div>
-                      )}
-                      {file.aiData.analysis.date && (
-                        <div>
-                          <span className="text-blue-700 font-medium">Date:</span>
-                          <span className="ml-1 text-blue-900">{file.aiData.analysis.date}</span>
-                        </div>
-                      )}
-                      {file.aiData.analysis.supplier && (
-                        <div>
-                          <span className="text-blue-700 font-medium">Supplier:</span>
-                          <span className="ml-1 text-blue-900">{file.aiData.analysis.supplier}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {file.aiData.metadata.analyzedAt && (
-                      <p className="text-xs text-blue-600 mt-2">
-                        Analyzed on {formatDate(file.aiData.metadata.analyzedAt)}
-                      </p>
-                    )}
-                  </div>
-                )}
+                  )
+                })()}
                 
                 {/* No AI Analysis Message with Manual Trigger */}
                 {!file.aiData && (

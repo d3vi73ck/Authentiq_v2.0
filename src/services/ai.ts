@@ -5,8 +5,10 @@
 
 import { logger } from '@/libs/Logger'
 
+
 // Timeout configuration for OpenAI API calls (30 seconds)
 const OPENAI_TIMEOUT_MS = 30000;
+
 
 // Types for document analysis results
 export interface ExpenseData {
@@ -24,7 +26,29 @@ export interface AnalysisMetadata {
   organizationId: string;
   analyzedAt: string;
   confidence: number;
-  method: 'ai' | 'regex';
+  model?: string;
+  processingTime?: number;
+  analysisId?: string;
+}
+
+export interface AICommentary {
+  observations: string[];
+  confidenceAssessment: string;
+  potentialIssues: string[];
+  recommendations: string[];
+  overallAssessment: string;
+}
+
+export interface EnhancedExpenseData {
+  fields: ExpenseData;
+  commentary: AICommentary;
+  fieldConfidences: {
+    amount: number;
+    currency: number;
+    date: number;
+    supplier: number;
+    documentType: number;
+  };
 }
 
 export interface DocumentAnalysisResult {
@@ -33,12 +57,15 @@ export interface DocumentAnalysisResult {
   metadata: AnalysisMetadata;
   error?: string;
   processingTime?: number;
-  method: 'ai' | 'regex';
+  rawResponse?: any; // Complete OpenAI API response
+  enhancedAnalysis?: EnhancedExpenseData; // Enhanced analysis with commentary
 }
 
 export interface AIDataStorage {
   analysis: ExpenseData;
   metadata: AnalysisMetadata;
+  rawResponse?: any;
+  enhancedAnalysis?: EnhancedExpenseData;
 }
 
 /**
@@ -63,62 +90,109 @@ export async function analyzeDocument(
   logger.info({ analysisId, filename, mimeType, fileSize: fileBuffer.length, userId, organizationId }, 'Starting document analysis');
   
   try {
-    // First try OpenAI API if available
+    // Check if OpenAI API is available
     const openAIAvailable = !!process.env.OPENAI_API_KEY;
     logger.debug({ analysisId, openAIAvailable, hasApiKey: !!process.env.OPENAI_API_KEY }, 'Checking OpenAI API availability');
     
-    if (openAIAvailable) {
-      logger.info({ analysisId }, 'Attempting OpenAI analysis');
-      try {
-        const aiResult = await analyzeWithOpenAI(fileBuffer, mimeType, filename, analysisId);
-        if (aiResult.success) {
-          const metadata: AnalysisMetadata = {
-            analyzedBy: userId || 'system',
-            organizationId: organizationId || 'unknown',
-            analyzedAt: new Date().toISOString(),
-            confidence: aiResult.data.confidence,
-            method: 'ai'
-          };
-          
-          const processingTime = Date.now() - startTime;
-          logger.info({ analysisId, success: true, method: 'ai', confidence: aiResult.data.confidence, processingTime }, 'OpenAI analysis completed successfully');
-          
-          return {
-            ...aiResult,
-            metadata,
-            processingTime,
-            method: 'ai'
-          };
-        } else {
-          logger.warn({ analysisId, error: aiResult.error }, 'OpenAI analysis failed, falling back to regex');
-        }
-      } catch (error) {
-        logger.error({ analysisId, error: error instanceof Error ? error.message : 'Unknown error' }, 'OpenAI analysis failed with exception, falling back to regex');
-      }
-    } else {
-      logger.warn({ analysisId }, 'OpenAI API key not available, using regex fallback');
+    if (!openAIAvailable) {
+      logger.warn({ analysisId }, 'OpenAI API key not available');
+      const processingTime = Date.now() - startTime;
+      
+      const metadata: AnalysisMetadata = {
+        analyzedBy: userId || 'system',
+        organizationId: organizationId || 'unknown',
+        analyzedAt: new Date().toISOString(),
+        confidence: 0
+      };
+      
+      return {
+        success: false,
+        data: {
+          amount: null,
+          currency: null,
+          date: null,
+          supplier: null,
+          documentType: null,
+          confidence: 0
+        },
+        metadata,
+        error: 'OpenAI API key not configured',
+        processingTime
+      };
     }
 
-    // Fallback to regex parsing
-    logger.info({ analysisId }, 'Using regex fallback analysis');
-    const regexResult = await analyzeWithRegex(fileBuffer, mimeType, filename);
-    const metadata: AnalysisMetadata = {
-      analyzedBy: userId || 'system',
-      organizationId: organizationId || 'unknown',
-      analyzedAt: new Date().toISOString(),
-      confidence: regexResult.data.confidence,
-      method: 'regex'
-    };
+    // Use OpenAI API exclusively
+    logger.info({ analysisId }, 'Attempting OpenAI analysis');
+
+    // ATI : before analyzing with open ai , check the mimeType 
+    // if it is a PDF , then return
+    if (mimeType === 'application/pdf') {
+      logger.info({ analysisId }, 'PDF detected, returning early');
+      return {
+        success: false,
+        data: {
+          amount: null,
+          currency: null,
+          date: null,
+          supplier: null,
+          documentType: null,
+          confidence: 0
+        },
+        metadata: {
+          analyzedBy: userId || 'system',
+          organizationId: organizationId || 'unknown',
+          analyzedAt: new Date().toISOString(),
+          confidence: 0
+        },
+        error: 'PDF files are not supported',
+        processingTime: Date.now() - startTime
+      };
+    }
+
+    const aiResult = await analyzeWithOpenAI(fileBuffer, mimeType, filename, analysisId);
     
-    const processingTime = Date.now() - startTime;
-    logger.info({ analysisId, success: true, method: 'regex', confidence: regexResult.data.confidence, processingTime }, 'Regex analysis completed');
-    
-    return {
-      ...regexResult,
-      metadata,
-      processingTime,
-      method: 'regex'
-    };
+    if (aiResult.success) {
+      const metadata: AnalysisMetadata = {
+        analyzedBy: userId || 'system',
+        organizationId: organizationId || 'unknown',
+        analyzedAt: new Date().toISOString(),
+        confidence: aiResult.data.confidence
+      };
+      
+      const processingTime = Date.now() - startTime;
+      logger.info({ analysisId, success: true, confidence: aiResult.data.confidence, processingTime }, 'OpenAI analysis completed successfully');
+      
+      return {
+        ...aiResult,
+        metadata,
+        processingTime
+      };
+    } else {
+      const processingTime = Date.now() - startTime;
+      logger.warn({ analysisId, error: aiResult.error }, 'OpenAI analysis failed');
+      
+      const metadata: AnalysisMetadata = {
+        analyzedBy: userId || 'system',
+        organizationId: organizationId || 'unknown',
+        analyzedAt: new Date().toISOString(),
+        confidence: 0
+      };
+      
+      return {
+        success: false,
+        data: {
+          amount: null,
+          currency: null,
+          date: null,
+          supplier: null,
+          documentType: null,
+          confidence: 0
+        },
+        metadata,
+        error: aiResult.error || 'OpenAI analysis failed',
+        processingTime
+      };
+    }
 
   } catch (error) {
     const processingTime = Date.now() - startTime;
@@ -128,8 +202,7 @@ export async function analyzeDocument(
       analyzedBy: userId || 'system',
       organizationId: organizationId || 'unknown',
       analyzedAt: new Date().toISOString(),
-      confidence: 0,
-      method: 'regex'
+      confidence: 0
     };
     
     return {
@@ -144,11 +217,11 @@ export async function analyzeDocument(
       },
       metadata,
       error: error instanceof Error ? error.message : 'Unknown error occurred',
-      processingTime,
-      method: 'regex'
+      processingTime
     };
   }
 }
+
 
 /**
  * Analyzes document using OpenAI Vision API
@@ -168,18 +241,45 @@ async function analyzeWithOpenAI(
   try {
     logger.debug({ analysisId, filename, mimeType, fileSize: fileBuffer.length }, 'Starting OpenAI analysis');
     
+    // Validate file type - OpenAI Vision API supports specific image types and PDF
+    // OpenAI Vision API supports: JPEG, JPG, PNG, GIF, WebP images and PDF documents
+    const supportedFileTypes = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf'
+    ];
+    
+    const isSupported = supportedFileTypes.includes(mimeType.toLowerCase());
+    
+    if (!isSupported) {
+      const supportedTypesList = supportedFileTypes.join(', ');
+      logger.warn({ analysisId, mimeType, supportedTypes: supportedTypesList }, 'Unsupported file type for OpenAI Vision API');
+      throw new Error(`Unsupported file type: ${mimeType}. OpenAI Vision API supports: ${supportedTypesList}`);
+    }
+    
+    let processedBuffer = fileBuffer;
+    let processedMimeType = mimeType;
+    
     // Convert buffer to base64 for OpenAI Vision API
-    const base64Image = fileBuffer.toString('base64');
+    const base64Image = processedBuffer.toString('base64');
     const base64Size = base64Image.length;
     
-    logger.debug({ analysisId, base64Size }, 'Converted file to base64 for OpenAI');
+    logger.debug({ analysisId, base64Size, isSupported, processedMimeType }, 'Converted file to base64 for OpenAI');
     
+    // Check if base64 data is too large (OpenAI has limits)
+    const maxBase64Size = 20 * 1024 * 1024; // 20MB limit for base64 encoded images
+    if (base64Size > maxBase64Size) {
+      logger.warn({ analysisId, base64Size, maxBase64Size }, 'Base64 data exceeds size limit, using low detail mode');
+    }
+
     const requestBody = {
       model: 'gpt-4o',
       messages: [
         {
           role: 'system',
           content: `You are an expert document analyzer for expense justification.
+          Analyze the document and provide comprehensive extraction and commentary.
+
+          **STRUCTURED DATA EXTRACTION:**
           Extract the following information from the document:
           - Total amount (numeric value)
           - Currency (EUR, USD, etc.)
@@ -187,9 +287,43 @@ async function analyzeWithOpenAI(
           - Supplier name
           - Document type (invoice, receipt, contract, etc.)
           
-          Support both English and French documents.
-          Return JSON with the extracted data and a confidence score (0-1).
+          **AI COMMENTARY:**
+          Provide detailed commentary including:
+          - Key observations about the document quality and content
+          - Confidence assessment for each extracted field
+          - Potential issues or inconsistencies found
+          - Recommendations for manual review if needed
+          - Overall assessment of the document analysis
           
+          **RESPONSE FORMAT:**
+          Return a JSON object with the following structure:
+          {
+            "extraction": {
+              "amount": number | null,
+              "currency": string | null,
+              "date": string | null,
+              "supplier": string | null,
+              "documentType": string | null,
+              "confidence": number (0-1),
+              "rawText": string (if applicable)
+            },
+            "commentary": {
+              "observations": string[],
+              "confidenceAssessment": string,
+              "potentialIssues": string[],
+              "recommendations": string[],
+              "overallAssessment": string
+            },
+            "fieldConfidences": {
+              "amount": number (0-1),
+              "currency": number (0-1),
+              "date": number (0-1),
+              "supplier": number (0-1),
+              "documentType": number (0-1)
+            }
+          }
+          
+          Support both English and French documents.
           If you cannot extract certain information, set it to null.
           Focus on finding the total amount, date, and supplier name.`
         },
@@ -198,22 +332,23 @@ async function analyzeWithOpenAI(
           content: [
             {
               type: 'text',
-              text: `Analyze this document (${filename}) and extract expense information.`
+              text: `Analyze this document (${filename}) and extract expense information with comprehensive commentary.`
             },
             {
               type: 'image_url',
               image_url: {
-                url: `data:${mimeType};base64,${base64Image}`
+                url: `data:${processedMimeType};base64,${base64Image}`,
+                detail: base64Size > maxBase64Size ? 'low' : 'high'
               }
             }
           ]
         }
       ],
-      max_tokens: 1000,
+      max_tokens: 2000,
       response_format: { type: 'json_object' }
     };
 
-    logger.debug({ analysisId, endpoint: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o', timeout: OPENAI_TIMEOUT_MS }, 'Making OpenAI API request with timeout');
+    logger.debug({ analysisId, endpoint: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o', timeout: OPENAI_TIMEOUT_MS, base64Size, detail: base64Size > maxBase64Size ? 'low' : 'high' }, 'Making OpenAI API request with timeout');
     
     // Create AbortController for timeout handling
     const controller = new AbortController();
@@ -236,8 +371,15 @@ async function analyzeWithOpenAI(
       
       if (!response.ok) {
         const errorText = await response.text();
-        logger.error({ analysisId, status: response.status, statusText: response.statusText, responseTime, errorText }, 'OpenAI API returned error response');
-        throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+        let errorDetails = errorText;
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorDetails = JSON.stringify(errorJson, null, 2);
+        } catch {
+          // Keep original error text if not JSON
+        }
+        logger.error({ analysisId, status: response.status, statusText: response.statusText, responseTime, errorDetails, requestBody: JSON.stringify(requestBody).substring(0, 1000) }, 'OpenAI API returned error response');
+        throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorDetails}`);
       }
 
       const data = await response.json();
@@ -251,30 +393,69 @@ async function analyzeWithOpenAI(
       logger.debug({ analysisId, contentLength: content.length, responseTime }, 'Received OpenAI response');
       
       const parsedData = JSON.parse(content);
-      const confidence = Math.min(Math.max(parsedData.confidence || 0.5, 0), 1);
+      
+      // Handle both old and new response formats for backward compatibility
+      let extractionData = parsedData;
+      let enhancedAnalysis: EnhancedExpenseData | undefined;
+      
+      if (parsedData.extraction) {
+        // New format with enhanced data
+        extractionData = parsedData.extraction;
+        
+        enhancedAnalysis = {
+          fields: {
+            amount: parseFloat(extractionData.amount) || null,
+            currency: extractionData.currency || null,
+            date: extractionData.date || null,
+            supplier: extractionData.supplier || null,
+            documentType: extractionData.documentType || null,
+            confidence: Math.min(Math.max(extractionData.confidence || 0.5, 0), 1),
+            rawText: extractionData.rawText
+          },
+          commentary: parsedData.commentary || {
+            observations: [],
+            confidenceAssessment: 'No commentary available',
+            potentialIssues: [],
+            recommendations: [],
+            overallAssessment: 'No assessment available'
+          },
+          fieldConfidences: parsedData.fieldConfidences || {
+            amount: extractionData.confidence || 0.5,
+            currency: extractionData.confidence || 0.5,
+            date: extractionData.confidence || 0.5,
+            supplier: extractionData.confidence || 0.5,
+            documentType: extractionData.confidence || 0.5
+          }
+        };
+      }
+      
+      const confidence = Math.min(Math.max(extractionData.confidence || 0.5, 0), 1);
       
       const result: DocumentAnalysisResult = {
         success: true,
         data: {
-          amount: parseFloat(parsedData.amount) || null,
-          currency: parsedData.currency || null,
-          date: parsedData.date || null,
-          supplier: parsedData.supplier || null,
-          documentType: parsedData.documentType || null,
+          amount: parseFloat(extractionData.amount) || null,
+          currency: extractionData.currency || null,
+          date: extractionData.date || null,
+          supplier: extractionData.supplier || null,
+          documentType: extractionData.documentType || null,
           confidence,
-          rawText: parsedData.rawText
+          rawText: extractionData.rawText
         },
         metadata: {
           analyzedBy: 'system',
           organizationId: 'unknown',
           analyzedAt: new Date().toISOString(),
           confidence,
-          method: 'ai'
+          model: 'gpt-4o',
+          processingTime: responseTime,
+          analysisId
         },
-        method: 'ai'
+        rawResponse: data, // Store complete OpenAI response
+        enhancedAnalysis
       };
 
-      logger.debug({ analysisId, parsedData, confidence }, 'Successfully parsed OpenAI response');
+      logger.debug({ analysisId, parsedData, confidence, hasEnhancedAnalysis: !!enhancedAnalysis }, 'Successfully parsed OpenAI response');
       
       return result;
 
@@ -288,74 +469,13 @@ async function analyzeWithOpenAI(
       }
       
       logger.error({ analysisId, error: error instanceof Error ? error.message : 'Unknown error', stack: error instanceof Error ? error.stack : undefined, responseTime }, 'OpenAI analysis failed');
-      throw error; // Let the fallback handle it
+      throw error;
     }
   } catch (error) {
     const responseTime = Date.now() - openAIStartTime;
     logger.error({ analysisId, error: error instanceof Error ? error.message : 'Unknown error', stack: error instanceof Error ? error.stack : undefined, responseTime }, 'OpenAI analysis failed completely');
-    throw error; // Let the fallback handle it
+    throw error;
   }
-}
-
-/**
- * Fallback regex-based document analysis
- * @param fileBuffer - The file buffer
- * @param mimeType - The MIME type
- * @param filename - The filename
- * @returns Promise resolving to analysis result
- */
-async function analyzeWithRegex(
-  fileBuffer: Buffer,
-  mimeType: string,
-  filename: string
-): Promise<DocumentAnalysisResult> {
-  // Fallback analysis using filename only since we no longer have OCR
-  const documentType = determineDocumentTypeFromFilename(filename);
-  const confidence = 0.3; // Low confidence for regex fallback
-  
-  return {
-    success: true,
-    data: {
-      amount: null,
-      currency: null,
-      date: null,
-      supplier: null,
-      documentType,
-      confidence
-    },
-    metadata: {
-      analyzedBy: 'system',
-      organizationId: 'unknown',
-      analyzedAt: new Date().toISOString(),
-      confidence,
-      method: 'regex'
-    },
-    method: 'regex'
-  };
-}
-
-/**
- * Determines document type from filename
- * @param filename - The filename
- * @returns Document type string
- */
-function determineDocumentTypeFromFilename(filename: string): string {
-  const lowerFilename = filename.toLowerCase();
-  
-  if (lowerFilename.includes('invoice') || lowerFilename.includes('facture')) {
-    return 'invoice';
-  }
-  if (lowerFilename.includes('receipt') || lowerFilename.includes('reçu')) {
-    return 'receipt';
-  }
-  if (lowerFilename.includes('contract') || lowerFilename.includes('contrat')) {
-    return 'contract';
-  }
-  if (lowerFilename.includes('bill') || lowerFilename.includes('note')) {
-    return 'bill';
-  }
-  
-  return 'other';
 }
 
 /**
@@ -404,6 +524,8 @@ export async function processDocumentsBatch(
 export function formatForStorage(result: DocumentAnalysisResult): AIDataStorage {
   return {
     analysis: result.data,
-    metadata: result.metadata
+    metadata: result.metadata,
+    rawResponse: result.rawResponse,
+    enhancedAnalysis: result.enhancedAnalysis
   };
 }
