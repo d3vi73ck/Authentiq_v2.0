@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { eq, and, desc } from 'drizzle-orm'
+import { eq, and, desc, ne } from 'drizzle-orm'
 import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
 import { fetchMultipleUsersInfo } from '@/utils/user-utils'
+import { NotificationService } from '@/services/notification'
 
 /**
  * GET /api/review/comments - Get comments for a submission
@@ -171,6 +172,47 @@ export async function POST(request: NextRequest) {
         email: user?.email || 'Unknown User',
         role: canUserReview ? 'reviewer' : 'association' // This is the role context for the comment, not the user's actual role
       }
+    }
+
+    // Create notifications for relevant users (non-blocking)
+    try {
+      // Notify the submission creator (unless they are the one commenting)
+      if (submission[0].createdBy !== userId) {
+        await NotificationService.createCommentNotification(
+          orgId,
+          submission[0].createdBy,
+          submissionId,
+          user?.email || 'User'
+        )
+      }
+
+      // Get all users who have commented on this submission (excluding current user and submission creator)
+      const existingComments = await db
+        .select({
+          userId: commentSchema.userId,
+        })
+        .from(commentSchema)
+        .where(
+          and(
+            eq(commentSchema.submissionId, submissionId),
+            ne(commentSchema.userId, userId),
+            ne(commentSchema.userId, submission[0].createdBy)
+          )
+        )
+        .groupBy(commentSchema.userId)
+
+      // Notify other commenters
+      for (const existingComment of existingComments) {
+        await NotificationService.createCommentNotification(
+          orgId,
+          existingComment.userId,
+          submissionId,
+          user?.email || 'User'
+        )
+      }
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError)
+      // Don't fail the entire request if notification creation fails
     }
 
     return NextResponse.json({ comment: commentWithUser }, { status: 201 })

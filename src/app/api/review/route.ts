@@ -6,6 +6,7 @@ import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema, commentSchema } from '@/models/Schema'
 import { canReview } from '@/libs/rbac'
 import { fetchMultipleUsersInfo } from '@/utils/user-utils'
+import { NotificationService } from '@/services/notification'
 
 /**
  * GET /api/review - List submissions pending review for current organization
@@ -298,6 +299,20 @@ export async function POST(request: NextRequest) {
     // Get reviewer user information
     const reviewerUserInfo = await fetchMultipleUsersInfo([userId])
     const reviewer = reviewerUserInfo[userId]
+
+    // Create notification for the submission creator
+    try {
+      await NotificationService.createSubmissionNotification(
+        orgId,
+        submission[0].createdBy, // Notify the submission creator
+        submissionId,
+        decision === 'APPROVE' ? 'APPROVED' : 'REJECTED',
+        reviewer?.email || 'Reviewer'
+      )
+    } catch (notificationError) {
+      console.error('Failed to create notification:', notificationError)
+      // Don't fail the entire request if notification creation fails
+    }
 
     return NextResponse.json({
       submission: updatedSubmission,

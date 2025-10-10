@@ -141,6 +141,27 @@ export const commentSchema = pgTable(
   },
 );
 
+export const notificationSchema = pgTable(
+  'notification',
+  {
+    id: text('id').primaryKey().default('cuid()'),
+    organizationId: text('organization_id').notNull().references(() => organizationSchema.id, { onDelete: 'cascade' }),
+    userId: text('user_id').notNull(), // Clerk user ID
+    type: text('type').notNull(), // e.g., 'submission_approved', 'comment_added', 'system'
+    message: text('message').notNull(),
+    read: boolean('read').default(false).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      organizationIdIdx: index('notification_organization_id_idx').on(table.organizationId),
+      userIdIdx: index('notification_user_id_idx').on(table.userId),
+      readIdx: index('notification_read_idx').on(table.read),
+      createdAtIdx: index('notification_created_at_idx').on(table.createdAt),
+    };
+  },
+);
+
 export const todoSchema = pgTable('todo', {
   id: serial('id').primaryKey(),
   ownerId: text('owner_id').notNull(),

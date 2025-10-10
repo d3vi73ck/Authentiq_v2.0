@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/templates/Logo';
 import { getI18nPath } from '@/utils/Helpers';
@@ -49,6 +50,11 @@ export const DashboardHeader = () => {
       </div>
 
       <div className="flex items-center gap-x-3">
+        {/* Notification Center */}
+        <NotificationCenter />
+        
+        <Separator orientation="vertical" className="h-6" />
+        
         <LocaleSwitcher />
         
         <Separator orientation="vertical" className="h-6" />
