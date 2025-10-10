@@ -39,6 +39,11 @@ export const useNavigationMenu = () => {
   const t = useTranslations('DashboardLayout');
   const permissions = useUserPermissions();
 
+  // If permissions are not loaded yet, return default items
+  if (!permissions.role) {
+    return defaultNavigationItems;
+  }
+
   // Define all navigation items with their required roles
   const navigationItems: NavigationItem[] = [
     {
@@ -77,6 +82,21 @@ export const useNavigationMenu = () => {
       roles: ['admin', 'superadmin'],
     },
     {
+      href: '/admin/settings',
+      label: t('admin_settings'),
+      roles: ['admin', 'superadmin'],
+    },
+    {
+      href: '/admin/billing',
+      label: t('admin_billing'),
+      roles: ['admin', 'superadmin'],
+    },
+    {
+      href: '/dashboard/organization/members',
+      label: t('members'),
+      roles: ['admin', 'superadmin'],
+    },
+    {
       href: '/dashboard/organization-profile',
       label: t('organization_settings'),
       roles: ['admin', 'superadmin'],
@@ -90,8 +110,7 @@ export const useNavigationMenu = () => {
 
   // Filter navigation items based on user role
   const filteredItems = navigationItems.filter(item => {
-    if (!permissions.role) return defaultNavigationItems;
-    return item.roles.includes(permissions.role);
+    return item.roles.includes(permissions.role!);
   });
 
   return filteredItems;

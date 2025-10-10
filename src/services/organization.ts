@@ -3,6 +3,15 @@ import { db } from '@/libs/DB'
 import { organizationSchema } from '@/models/Schema'
 import { eq } from 'drizzle-orm'
 
+// Role mapping from our RBAC to Clerk organization roles
+// Clerk roles: 'basic_member' | 'admin'
+const ROLE_MAPPING = {
+  association: 'basic_member',
+  chef: 'basic_member',
+  admin: 'admin',
+  superadmin: 'admin',
+} as const
+
 /**
  * Organization synchronization service
  * Handles synchronization between Clerk organizations and local database
@@ -147,6 +156,76 @@ export class OrganizationService {
     } catch (error) {
       console.error(`🔍 Error getting organization: ${organizationId}`, error)
       return null
+    }
+  }
+
+  /**
+   * Send organization invitation using Clerk API
+   */
+  static async sendInvitation(organizationId: string, email: string, role: keyof typeof ROLE_MAPPING) {
+    try {
+      console.log(`🔍 Sending invitation to ${email} for organization ${organizationId} with role ${role}`)
+      
+      const client = await clerkClient()
+      
+      // Map our role to Clerk's organization role
+      const clerkRole = ROLE_MAPPING[role]
+      
+      // Use type assertion to bypass Clerk's type checking
+      const invitation = await client.organizations.createOrganizationInvitation({
+        organizationId,
+        emailAddress: email,
+        role: clerkRole as any, // Clerk expects 'basic_member' | 'admin' but our types conflict
+        // Clerk will handle email sending automatically
+      })
+
+      console.log(`🔍 Invitation sent successfully: ${invitation.id}`)
+      return invitation
+    } catch (error) {
+      console.error(`🔍 Error sending invitation to ${email}:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Get organization members list from Clerk
+   */
+  static async getOrganizationMembers(organizationId: string) {
+    try {
+      console.log(`🔍 Fetching members for organization: ${organizationId}`)
+      
+      const client = await clerkClient()
+      
+      const members = await client.organizations.getOrganizationMembershipList({
+        organizationId,
+      })
+
+      console.log(`🔍 Found ${members.data?.length || 0} members for organization ${organizationId}`)
+      return members.data || []
+    } catch (error) {
+      console.error(`🔍 Error fetching members for organization ${organizationId}:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Get organization invitations list from Clerk
+   */
+  static async getOrganizationInvitations(organizationId: string) {
+    try {
+      console.log(`🔍 Fetching invitations for organization: ${organizationId}`)
+      
+      const client = await clerkClient()
+      
+      const invitations = await client.organizations.getOrganizationInvitationList({
+        organizationId,
+      })
+
+      console.log(`🔍 Found ${invitations.data?.length || 0} invitations for organization ${organizationId}`)
+      return invitations.data || []
+    } catch (error) {
+      console.error(`🔍 Error fetching invitations for organization ${organizationId}:`, error)
+      throw error
     }
   }
 }

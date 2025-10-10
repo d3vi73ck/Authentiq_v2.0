@@ -14,26 +14,62 @@ import { auth } from '@clerk/nextjs/server'
 export type UserRole = 'user' | 'chef' | 'admin' | 'superadmin'
 
 /**
- * Get user role from Clerk metadata (Server only)
+ * Get user role from Clerk organization membership (Server only)
  */
 export async function getUserRole(): Promise<UserRole | null> {
   try {
-    const { userId } = await auth()
+    const { userId, orgId } = await auth()
     
     if (!userId) {
       return null
     }
 
-    // In a real implementation, you would fetch user metadata from Clerk
-    // For now, we'll use a placeholder - you should implement this based on your Clerk setup
-    // const user = await clerkClient.users.getUser(userId)
-    // return user.publicMetadata?.role as UserRole || 'user'
+    // Import clerkClient dynamically to avoid server-side issues
+    const { clerkClient } = await import('@clerk/nextjs/server')
     
-    // Placeholder implementation - replace with actual Clerk metadata lookup
-    return 'user'
+    // Fetch user organization memberships from Clerk
+    const client = await clerkClient()
+    
+    // If no organization ID, fall back to user role
+    if (!orgId) {
+      return 'user'
+    }
+
+    // Get organization membership for the current user and organization
+    const memberships = await client.organizations.getOrganizationMembershipList({
+      organizationId: orgId,
+      userId: [userId],
+    })
+    
+    // If no memberships found, fall back to user role
+    if (!memberships.data || memberships.data.length === 0) {
+      return 'user'
+    }
+
+    // Get the first membership (should only be one for this user in this org)
+    const membership = memberships.data[0]
+    const clerkRole = membership?.role
+    
+    // If no role found in membership, fall back to user role
+    if (!clerkRole) {
+      return 'user'
+    }
+    
+    // Map Clerk roles to RBAC roles
+    const roleMapping: Record<string, UserRole> = {
+      'Admin': 'admin',
+      'association': 'chef',
+      'Member': 'user'
+    }
+    
+    // Return mapped role or fall back to 'user' if no mapping found
+    const mappedRole = roleMapping[clerkRole] || 'user'
+    console.log('Mapped role:', mappedRole)
+    return mappedRole
   } catch (error) {
-    console.error('Error getting user role:', error)
-    return null
+    console.error('Error getting user role from organization membership:', error)
+    // Fall back to user role on error
+    return 'user'
   }
 }
 
@@ -85,13 +121,16 @@ export async function hasAnyRole(requiredRoles: UserRole[]): Promise<boolean> {
 export async function getUserPermissions() {
   const role = await getUserRole()
   
-  return {
+  const permissions = {
     role,
     canReview: await canReview(),
     canManageOrganization: await canManageOrganization(),
     isAdmin: role === 'admin' || role === 'superadmin',
     isSuperAdmin: role === 'superadmin',
   }
+  
+  console.log('🔍 RBAC Server - User permissions:', permissions)
+  return permissions
 }
 
 /**

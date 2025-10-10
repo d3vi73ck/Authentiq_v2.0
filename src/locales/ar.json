@@ -109,6 +109,8 @@
     "admin_dashboard": " لوحة تحكم المسؤول",
     "reports": " التقارير",
     "export_reports": " تصدير التقارير",
+    "admin_settings": " إعدادات المسؤول",
+    "admin_billing": " فواتير المسؤول",
     "organization_settings": " إعدادات المنظمة",
     "user_profile": " ملف المستخدم"
   },

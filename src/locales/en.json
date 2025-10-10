@@ -108,6 +108,8 @@
     "admin_dashboard": "Admin Dashboard",
     "reports": "Reports",
     "export_reports": "Export Reports",
+    "admin_settings": "Admin Settings",
+    "admin_billing": "Admin Billing",
     "organization_settings": "Organization Settings",
     "user_profile": "User Profile"
   },
@@ -246,5 +248,26 @@
       "RECU": "Receipt",
       "AUTRE": "Other"
     }
+  },
+  "OrganizationMembers": {
+    "title_bar": "Organization Members",
+    "title_bar_description": "Manage your organization members and invitations",
+    "error": "Error",
+    "success": "Success",
+    "invite_member": "Invite Member",
+    "email_label": "Email Address",
+    "email_placeholder": "Enter email address",
+    "role_label": "Role",
+    "role_association": "Association Member",
+    "role_chef": "Chef",
+    "role_admin": "Admin",
+    "send_invitation": "Send Invitation",
+    "sending_invitation": "Sending...",
+    "members_title": "Organization Members",
+    "no_members_title": "No members",
+    "no_members_description": "Invite members to join your organization.",
+    "member_since": "Member since {date}",
+    "pending_invitations": "Pending Invitations",
+    "invited_on": "Invited on {date}"
   }
 }
