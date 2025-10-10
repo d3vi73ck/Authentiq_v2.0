@@ -44,8 +44,7 @@ Runs on your VPS (Dockerized)
 | **Database**        | PostgreSQL (via Prisma ORM)  | Multi-tenant schema                   |
 | **Storage**         | MinIO (self-hosted S3)       | Centralized secure document storage   |
 | **Auth**            | NextAuth.js                  | Roles + tenant-based session handling |
-| **OCR**             | Tesseract.js (local)         | Extracts text from uploads            |
-| **AI Validation**   | OpenAI API (or local Ollama) | Detects doc type, amount, date, etc.  |
+| **AI Processing**   | OpenAI API (or local Ollama) | Extracts text and analyzes documents  |
 | **Billing (later)** | Stripe                       | ONG subscriptions & quotas            |
 | **Infra**           | Docker + Nginx + Cloudflare  | Self-hosted SaaS foundation           |
 

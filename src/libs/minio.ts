@@ -1,4 +1,5 @@
 import * as Minio from 'minio'
+import { logger } from './Logger'
 
 // MinIO configuration from environment variables
 const minioConfig = {
@@ -15,23 +16,36 @@ export const minioClient = new Minio.Client(minioConfig)
 // Default bucket name
 export const DEFAULT_BUCKET = process.env.MINIO_BUCKET || 'kifndirou'
 
+logger.info({
+  endPoint: minioConfig.endPoint,
+  port: minioConfig.port,
+  useSSL: minioConfig.useSSL,
+  bucket: DEFAULT_BUCKET
+}, 'MinIO client initialized');
+
 /**
  * Ensures the MinIO bucket exists
  * @param bucketName - The bucket name to ensure exists
  * @returns Promise resolving to boolean indicating success
  */
 export async function ensureBucketExists(bucketName: string = DEFAULT_BUCKET): Promise<boolean> {
+  const operationId = `minio-bucket-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
+    logger.debug({ operationId, bucketName }, 'Checking if bucket exists')
     const exists = await minioClient.bucketExists(bucketName)
     
     if (!exists) {
+      logger.info({ operationId, bucketName }, 'Bucket does not exist, creating new bucket')
       await minioClient.makeBucket(bucketName, 'us-east-1')
-      console.log(`Created bucket: ${bucketName}`)
+      logger.info({ operationId, bucketName }, 'Bucket created successfully')
+    } else {
+      logger.debug({ operationId, bucketName }, 'Bucket already exists')
     }
     
     return true
   } catch (error) {
-    console.error('Error ensuring bucket exists:', error)
+    logger.error({ operationId, bucketName, error: error instanceof Error ? error.message : 'Unknown error' }, 'Error ensuring bucket exists')
     return false
   }
 }
@@ -41,11 +55,15 @@ export async function ensureBucketExists(bucketName: string = DEFAULT_BUCKET): P
  * @returns Promise resolving to boolean indicating if connection is valid
  */
 export async function validateMinioConnection(): Promise<boolean> {
+  const operationId = `minio-validate-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
+    logger.debug({ operationId }, 'Validating MinIO connection')
     await ensureBucketExists()
+    logger.info({ operationId }, 'MinIO connection validated successfully')
     return true
   } catch (error) {
-    console.error('MinIO connection validation failed:', error)
+    logger.error({ operationId, error: error instanceof Error ? error.message : 'Unknown error' }, 'MinIO connection validation failed')
     return false
   }
 }
@@ -57,10 +75,15 @@ export async function validateMinioConnection(): Promise<boolean> {
  * @returns Promise resolving to presigned URL
  */
 export async function getFileUrl(objectKey: string, bucketName: string = DEFAULT_BUCKET): Promise<string> {
+  const operationId = `minio-url-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
-    return await minioClient.presignedGetObject(bucketName, objectKey, 24 * 60 * 60) // 24 hours expiry
+    logger.debug({ operationId, objectKey, bucketName }, 'Generating presigned file URL')
+    const url = await minioClient.presignedGetObject(bucketName, objectKey, 24 * 60 * 60) // 24 hours expiry
+    logger.debug({ operationId, objectKey, urlLength: url.length }, 'File URL generated successfully')
+    return url
   } catch (error) {
-    console.error('Error generating file URL:', error)
+    logger.error({ operationId, objectKey, bucketName, error: error instanceof Error ? error.message : 'Unknown error' }, 'Error generating file URL')
     throw new Error('Failed to generate file URL')
   }
 }
@@ -72,11 +95,15 @@ export async function getFileUrl(objectKey: string, bucketName: string = DEFAULT
  * @returns Promise resolving to boolean indicating success
  */
 export async function deleteFile(objectKey: string, bucketName: string = DEFAULT_BUCKET): Promise<boolean> {
+  const operationId = `minio-delete-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
+    logger.info({ operationId, objectKey, bucketName }, 'Deleting file from MinIO')
     await minioClient.removeObject(bucketName, objectKey)
+    logger.info({ operationId, objectKey }, 'File deleted successfully')
     return true
   } catch (error) {
-    console.error('Error deleting file:', error)
+    logger.error({ operationId, objectKey, bucketName, error: error instanceof Error ? error.message : 'Unknown error' }, 'Error deleting file')
     return false
   }
 }
@@ -95,16 +122,20 @@ export async function uploadFile(
   contentType: string,
   bucketName: string = DEFAULT_BUCKET
 ): Promise<boolean> {
+  const operationId = `minio-upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
+    logger.debug({ operationId, objectKey, bucketName, contentType, fileSize: fileBuffer.length }, 'Uploading file to MinIO')
     await ensureBucketExists(bucketName)
     
     await minioClient.putObject(bucketName, objectKey, fileBuffer, fileBuffer.length, {
       'Content-Type': contentType,
     })
     
+    logger.info({ operationId, objectKey, fileSize: fileBuffer.length }, 'File uploaded successfully')
     return true
   } catch (error) {
-    console.error('Error uploading file:', error)
+    logger.error({ operationId, objectKey, bucketName, contentType, fileSize: fileBuffer.length, error: error instanceof Error ? error.message : 'Unknown error' }, 'Error uploading file')
     return false
   }
 }

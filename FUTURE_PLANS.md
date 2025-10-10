@@ -10,7 +10,7 @@ This document outlines the strategic direction, planned features, technical enha
 - Multi-tenant authentication with Clerk
 - Basic expense submission workflow
 - File upload and storage with MinIO
-- OCR text extraction with Tesseract.js
+- AI text extraction and analysis with OpenAI
 - Role-based access control
 - Multi-language support (English/French)
 - Database schema and migrations

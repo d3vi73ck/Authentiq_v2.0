@@ -4,9 +4,8 @@ import { eq, and } from 'drizzle-orm'
 import { createId } from '@paralleldrive/cuid2'
 import { db } from '@/libs/DB'
 import { submissionSchema, fileSchema } from '@/models/Schema'
-import { minioClient, generateObjectKey, uploadFile } from '@/libs/minio'
+import { generateObjectKey, uploadFile } from '@/libs/minio'
 import { validateFile, determineFileKind, FileKind } from '@/libs/file-utils'
-import { extractText, isOCRSupported } from '@/services/ocr'
 import { analyzeDocument } from '@/services/ai'
 
 /**
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File
     const submissionId = formData.get('submissionId') as string
     const kind = formData.get('kind') as string
-    const processOCR = formData.get('processOCR') === 'true'
     const processAI = formData.get('processAI') === 'true'
 
     // Validate required fields
@@ -119,10 +117,10 @@ export async function POST(request: NextRequest) {
       createdAt: fileRecord.createdAt,
     }
 
-    // Background processing for OCR and AI analysis
-    if (processOCR || processAI) {
+    // Background processing for AI analysis
+    if (processAI) {
       // Process in background without blocking the response
-      processBackgroundAnalysis(fileRecord.id, buffer, validation.mimeType!, file.name, processOCR, processAI)
+      processBackgroundAnalysis(fileRecord.id, buffer, validation.mimeType!, file.name, processAI)
         .catch(error => console.error('Background processing error:', error))
     }
 
@@ -130,7 +128,6 @@ export async function POST(request: NextRequest) {
       success: true,
       file: fileResponse,
       processing: {
-        ocr: processOCR,
         ai: processAI
       }
     }, { status: 201 })
@@ -211,40 +208,17 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Process OCR and AI analysis in background
+ * Process AI analysis in background
  */
 async function processBackgroundAnalysis(
   fileId: string,
   fileBuffer: Buffer,
   mimeType: string,
   filename: string,
-  processOCR: boolean,
   processAI: boolean
 ): Promise<void> {
   try {
     const results: any = {}
-
-    // Perform OCR processing if requested and supported
-    if (processOCR && isOCRSupported(mimeType)) {
-      try {
-        const ocrResult = await extractText(fileBuffer, mimeType, filename)
-        results.ocr = ocrResult
-
-        // Update file record with OCR text if successful
-        if (ocrResult.success && ocrResult.text) {
-          await db
-            .update(fileSchema)
-            .set({ ocrText: ocrResult.text })
-            .where(eq(fileSchema.id, fileId))
-        }
-      } catch (error) {
-        console.error('OCR processing error:', error)
-        results.ocr = {
-          success: false,
-          error: error instanceof Error ? error.message : 'OCR processing failed'
-        }
-      }
-    }
 
     // Perform AI analysis if requested
     if (processAI) {

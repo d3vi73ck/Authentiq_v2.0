@@ -142,10 +142,12 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
   }
 
   const handleAnalyzeWithAI = async (fileId: string) => {
+    console.log(`[ReviewPanel] Starting AI analysis for file: ${fileId}`)
     setAnalyzingFiles(prev => new Set(prev).add(fileId))
     setAnalysisErrors(prev => ({ ...prev, [fileId]: '' }))
 
     try {
+      console.log(`[ReviewPanel] Sending analyze request for file: ${fileId}`)
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
@@ -160,17 +162,20 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
 
       if (!response.ok) {
         const errorData = await response.json()
+        console.error(`[ReviewPanel] AI analysis failed for file ${fileId}:`, errorData)
         throw new Error(errorData.error || 'AI analysis failed')
       }
 
       const result = await response.json()
+      console.log(`[ReviewPanel] AI analysis completed for file ${fileId}:`, result)
       
       // Refresh the page to show updated AI data
       if (onDecision) {
+        console.log(`[ReviewPanel] Triggering page refresh for file ${fileId}`)
         onDecision()
       }
     } catch (err) {
-      console.error('AI analysis error:', err)
+      console.error(`[ReviewPanel] AI analysis error for file ${fileId}:`, err)
       setAnalysisErrors(prev => ({
         ...prev,
         [fileId]: err instanceof Error ? err.message : 'AI analysis failed'
@@ -179,6 +184,7 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
       setAnalyzingFiles(prev => {
         const newSet = new Set(prev)
         newSet.delete(fileId)
+        console.log(`[ReviewPanel] Analysis completed for file ${fileId}, removing from analyzing set`)
         return newSet
       })
     }

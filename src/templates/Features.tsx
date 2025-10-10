@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl';
 
-import { Background } from '@/components/Background';
 import { FeatureCard } from '@/features/landing/FeatureCard';
 import { Section } from '@/features/landing/Section';
 
@@ -8,7 +7,7 @@ export const Features = () => {
   const t = useTranslations('Features');
 
   return (
-    <Background>
+    <div className="w-full bg-secondary">
       <Section
         subtitle={t('section_subtitle')}
         title={t('section_title')}
@@ -130,6 +129,6 @@ export const Features = () => {
           </FeatureCard>
         </div>
       </Section>
-    </Background>
+    </div>
   );
 };

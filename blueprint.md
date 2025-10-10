@@ -4,8 +4,7 @@
 * **Prisma + PostgreSQL**
 * **NextAuth.js** (Credentials) + RBAC (association/chef/admin/superadmin)
 * **MinIO** (S3-compatible) for files
-* **Tesseract** (server-side OCR via `tesseract.js-node`)
-* **Optional AI**: OpenAI (or Ollama HTTP) for parsing
+* **OpenAI** for document text extraction and analysis
 
 ---
 

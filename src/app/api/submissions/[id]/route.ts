@@ -13,10 +13,8 @@ interface RouteParams {
 /**
  * GET /api/submissions/[id] - Get submission details
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(
-    
-  request: NextRequest,
+  _request: NextRequest,
   { params }: RouteParams
 ) {
   try {

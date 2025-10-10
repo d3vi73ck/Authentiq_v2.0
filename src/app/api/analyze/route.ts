@@ -3,37 +3,49 @@ import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/libs/DB'
 import { fileSchema, submissionSchema } from '@/models/Schema'
-import { extractText, isOCRSupported } from '@/services/ocr'
 import { analyzeDocument } from '@/services/ai'
+import { logger } from '@/libs/Logger'
 
 /**
- * POST /api/analyze - Analyze a document using OCR and AI
- * 
+ * POST /api/analyze - Analyze a document using AI
+ *
  * Required body:
  * - fileId: The file ID to analyze
- * - processOCR: Whether to perform OCR (default: true)
  * - processAI: Whether to perform AI analysis (default: true)
  */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  const requestId = `analyze-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   try {
+    logger.info({ requestId, action: 'analyze_start' }, 'Starting document analysis request')
+    
     // Check authentication using Clerk
     const { userId, orgId } = await auth()
+    logger.debug({ requestId, userId, orgId }, 'Authentication check completed')
+    
     if (!userId) {
+      logger.warn({ requestId }, 'Authentication failed - no user ID')
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
     if (!orgId) {
+      logger.warn({ requestId, userId }, 'Organization context missing')
       return NextResponse.json({ error: 'Organization context required' }, { status: 400 })
     }
 
     const body = await request.json()
-    const { fileId, processOCR = true, processAI = true } = body
+    const { fileId, processAI = true } = body
+
+    logger.info({ requestId, fileId, processAI, userId, orgId }, 'Analysis request parameters')
 
     if (!fileId) {
+      logger.warn({ requestId }, 'File ID missing from request')
       return NextResponse.json({ error: 'File ID is required' }, { status: 400 })
     }
 
     // Verify file exists and belongs to organization
+    logger.debug({ requestId, fileId }, 'Querying database for file record')
     const file = await db
       .select({
         id: fileSchema.id,
@@ -58,17 +70,22 @@ export async function POST(request: NextRequest) {
       .limit(1)
 
     if (!file.length) {
+      logger.warn({ requestId, fileId, orgId }, 'File not found or access denied')
       return NextResponse.json({ error: 'File not found or access denied' }, { status: 404 })
     }
 
     const fileRecord = file[0]
     if (!fileRecord) {
+      logger.warn({ requestId, fileId }, 'File record is empty')
       return NextResponse.json({ error: 'File not found' }, { status: 404 })
     }
+
+    logger.info({ requestId, fileId, objectKey: fileRecord.objectKey, mimeType: fileRecord.mime, fileSize: fileRecord.size }, 'File record retrieved successfully')
 
     const results: any = {}
 
     // Get file from MinIO storage
+    logger.debug({ requestId, objectKey: fileRecord.objectKey }, 'Retrieving file from MinIO storage')
     const { minioClient, DEFAULT_BUCKET } = await import('@/libs/minio')
     let fileBuffer: Buffer
 
@@ -76,57 +93,58 @@ export async function POST(request: NextRequest) {
       const stream = await minioClient.getObject(DEFAULT_BUCKET, fileRecord.objectKey)
       fileBuffer = await new Promise<Buffer>((resolve, reject) => {
         const chunks: Buffer[] = []
-        stream.on('data', (chunk: Buffer) => chunks.push(chunk))
-        stream.on('end', () => resolve(Buffer.concat(chunks)))
-        stream.on('error', reject)
+        let totalSize = 0
+        
+        stream.on('data', (chunk: Buffer) => {
+          chunks.push(chunk)
+          totalSize += chunk.length
+        })
+        
+        stream.on('end', () => {
+          const buffer = Buffer.concat(chunks)
+          logger.debug({ requestId, fileSize: buffer.length, chunks: chunks.length, totalSize }, 'File retrieved successfully from MinIO')
+          resolve(buffer)
+        })
+        
+        stream.on('error', (error) => {
+          logger.error({ requestId, error: error.message }, 'Error retrieving file from MinIO')
+          reject(error)
+        })
       })
     } catch (error) {
-      console.error('Error retrieving file from MinIO:', error)
+      logger.error({ requestId, error: error instanceof Error ? error.message : 'Unknown error', objectKey: fileRecord.objectKey }, 'Failed to retrieve file from MinIO')
       return NextResponse.json({ error: 'Failed to retrieve file' }, { status: 500 })
-    }
-
-    // Perform OCR processing if requested and supported
-    if (processOCR && isOCRSupported(fileRecord.mime)) {
-      try {
-        const ocrResult = await extractText(fileBuffer, fileRecord.mime, fileRecord.objectKey)
-        results.ocr = ocrResult
-
-        // Update file record with OCR text if successful
-        if (ocrResult.success && ocrResult.text) {
-          await db
-            .update(fileSchema)
-            .set({ ocrText: ocrResult.text })
-            .where(eq(fileSchema.id, fileId))
-        }
-      } catch (error) {
-        console.error('OCR processing error:', error)
-        results.ocr = {
-          success: false,
-          error: error instanceof Error ? error.message : 'OCR processing failed'
-        }
-      }
     }
 
     // Perform AI analysis if requested
     if (processAI) {
+      logger.debug({ requestId }, 'Starting AI analysis')
       try {
-        const aiResult = await analyzeDocument(fileBuffer, fileRecord.mime, fileRecord.objectKey)
+        const aiResult = await analyzeDocument(fileBuffer, fileRecord.mime, fileRecord.objectKey, userId, orgId)
         results.ai = aiResult
+
+        logger.info({ requestId, success: aiResult.success, method: aiResult.method, confidence: aiResult.data?.confidence, processingTime: aiResult.processingTime }, 'AI analysis completed')
 
         // Update file record with AI data if successful
         if (aiResult.success) {
+          logger.debug({ requestId }, 'Updating file record with AI data')
           await db
             .update(fileSchema)
             .set({ aiData: aiResult.data })
             .where(eq(fileSchema.id, fileId))
+          logger.debug({ requestId }, 'File record updated with AI data')
+        } else {
+          logger.warn({ requestId, error: aiResult.error }, 'AI analysis failed, not updating database')
         }
       } catch (error) {
-        console.error('AI analysis error:', error)
+        logger.error({ requestId, error: error instanceof Error ? error.message : 'Unknown error' }, 'AI analysis failed with exception')
         results.ai = {
           success: false,
           error: error instanceof Error ? error.message : 'AI analysis failed'
         }
       }
+    } else {
+      logger.debug({ requestId }, 'AI analysis skipped')
     }
 
     return NextResponse.json({

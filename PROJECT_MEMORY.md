@@ -26,8 +26,7 @@
 - **Authentication**: Clerk (with multi-tenant support)
 - **Database**: PostgreSQL (production), PGlite (development)
 - **File Storage**: MinIO (S3-compatible object storage)
-- **OCR Processing**: Tesseract.js
-- **AI Analysis**: OpenAI integration (planned)
+- **AI Processing**: OpenAI for document text extraction and analysis
 - **Internationalization**: next-intl with Crowdin integration
 
 ### Database Schema
@@ -86,8 +85,7 @@
 
 **File Processing Pipeline**
 1. File upload with validation
-2. OCR text extraction (Tesseract.js)
-3. AI analysis (planned)
+2. AI text extraction and analysis (OpenAI)
 4. Background processing for performance
 
 ## Key Implementation Details
@@ -154,7 +152,7 @@
 - ✅ Multi-tenant authentication with Clerk
 - ✅ Expense submission creation and management
 - ✅ File upload with MinIO integration
-- ✅ OCR text extraction with Tesseract.js
+- ✅ AI text extraction and analysis with OpenAI
 - ✅ Basic review workflow
 - ✅ Multi-language support (English/French)
 - ✅ Role-based access control
@@ -399,7 +397,7 @@ const roleMapping: Record<string, UserRole> = {
 - ✅ Multi-tenant authentication with Clerk
 - ✅ Expense submission creation and management
 - ✅ File upload with MinIO integration
-- ✅ OCR text extraction with Tesseract.js
+- ✅ AI text extraction and analysis with OpenAI
 - ✅ Basic review workflow
 - ✅ Multi-language support (English/French)
 - ✅ Role-based access control
