@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { OrganizationService } from '@/services/organization'
+import { canManageOrganization } from '@/libs/rbac'
 
 // Define allowed roles for invitations
-const ALLOWED_ROLES = ['association', 'chef', 'admin', 'superadmin'] as const
+const ALLOWED_ROLES = ['association', 'member', 'reviewer', 'admin', 'superadmin'] as const
 type AllowedRole = typeof ALLOWED_ROLES[number]
 
 /**
  * POST /api/organization/invitations - Send organization invitation
+ * Requires: admin or superadmin role
  */
 export async function POST(request: NextRequest) {
   try {
@@ -19,6 +21,15 @@ export async function POST(request: NextRequest) {
 
     if (!orgId) {
       return NextResponse.json({ error: 'Organization context required' }, { status: 400 })
+    }
+
+    // Check if user can manage organization
+    const canUserManageOrg = await canManageOrganization()
+    if (!canUserManageOrg) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions to send invitations' },
+        { status: 403 }
+      )
     }
 
     // Parse request body
@@ -46,7 +57,7 @@ export async function POST(request: NextRequest) {
       role as AllowedRole
     )
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       invitation: {
         id: invitation.id,
         emailAddress: invitation.emailAddress,
@@ -84,6 +95,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/organization/invitations - List organization invitations
+ * Requires: admin or superadmin role
  */
 export async function GET() {
   try {
@@ -97,10 +109,19 @@ export async function GET() {
       return NextResponse.json({ error: 'Organization context required' }, { status: 400 })
     }
 
+    // Check if user can manage organization
+    const canUserManageOrg = await canManageOrganization()
+    if (!canUserManageOrg) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions to view invitations' },
+        { status: 403 }
+      )
+    }
+
     // Get invitations using OrganizationService
     const invitations = await OrganizationService.getOrganizationInvitations(orgId)
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       invitations: invitations.map(invitation => ({
         id: invitation.id,
         emailAddress: invitation.emailAddress,

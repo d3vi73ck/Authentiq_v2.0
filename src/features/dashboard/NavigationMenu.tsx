@@ -7,7 +7,7 @@ import { useUserPermissions } from '@/libs/rbac-client';
 export type NavigationItem = {
   href: string;
   label: string;
-  roles: ('user' | 'chef' | 'admin' | 'superadmin')[];
+  roles: ('association' | 'member' | 'reviewer' | 'admin' | 'superadmin')[];
   icon: string;
 };
 
@@ -16,25 +16,25 @@ export const defaultNavigationItems: NavigationItem[] = [
   {
     href: '/dashboard',
     label: 'Home',
-    roles: ['user', 'chef', 'admin', 'superadmin'],
+    roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
     icon: 'Home',
   },
   {
     href: '/submissions/new',
     label: 'New Expense',
-    roles: ['user', 'chef', 'admin', 'superadmin'],
+    roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
     icon: 'PlusCircle',
   },
   {
     href: '/submissions',
     label: 'Submissions',
-    roles: ['user', 'chef', 'admin', 'superadmin'],
+    roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
     icon: 'FileText',
   },
   {
     href: '/dashboard/user-profile',
     label: 'User Profile',
-    roles: ['user', 'chef', 'admin', 'superadmin'],
+    roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
     icon: 'User',
   },
 ];
@@ -58,31 +58,31 @@ export const useNavigationMenu = () => {
 
   // Define all navigation items with their required roles
   const navigationItems: NavigationItem[] = [
-    // 👥 Association (Basic User) - Core workflow
+    // 👥 Association & Member - Core workflow
     {
       href: '/dashboard',
       label: t('home'),
-      roles: ['user', 'chef', 'admin', 'superadmin'],
+      roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
       icon: 'Home',
     },
     {
       href: '/submissions/new',
       label: t('new_expense'),
-      roles: ['user', 'chef', 'admin', 'superadmin'],
+      roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
       icon: 'PlusCircle',
     },
     {
       href: '/submissions',
       label: t('submissions'),
-      roles: ['user', 'chef', 'admin', 'superadmin'],
+      roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
       icon: 'FileText',
     },
     
-    // 👩‍🍳 Chef / Admin / Superadmin - Review & Reporting
+    // 👨‍⚖️ Reviewer / Admin / Superadmin - Review & Reporting
     {
       href: '/review',
       label: t('review'),
-      roles: ['chef', 'admin', 'superadmin'],
+      roles: ['reviewer', 'admin', 'superadmin'],
       icon: 'ClipboardCheck',
     },
     {
@@ -134,7 +134,7 @@ export const useNavigationMenu = () => {
     {
       href: '/dashboard/user-profile',
       label: t('user_profile'),
-      roles: ['user', 'chef', 'admin', 'superadmin'],
+      roles: ['association', 'member', 'reviewer', 'admin', 'superadmin'],
       icon: 'User',
     },
   ];

@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { OrganizationService } from '@/services/organization'
+import { canManageOrganization } from '@/libs/rbac'
 
 /**
  * GET /api/organization/members - List organization members
+ * Requires: admin or superadmin role
  */
 export async function GET() {
   try {
@@ -17,10 +19,19 @@ export async function GET() {
       return NextResponse.json({ error: 'Organization context required' }, { status: 400 })
     }
 
+    // Check if user can manage organization
+    const canUserManageOrg = await canManageOrganization()
+    if (!canUserManageOrg) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions to view organization members' },
+        { status: 403 }
+      )
+    }
+
     // Get members using OrganizationService
     const members = await OrganizationService.getOrganizationMembers(orgId)
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       members: members.map(member => ({
         id: member.id,
         userId: member.publicUserData?.userId,

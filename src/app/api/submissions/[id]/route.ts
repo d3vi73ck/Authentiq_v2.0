@@ -13,6 +13,7 @@ interface RouteParams {
 
 /**
  * GET /api/submissions/[id] - Get submission details
+ * Access: All authenticated users in the organization (association, member, reviewer, admin, superadmin)
  */
 export async function GET(
   _request: NextRequest,
@@ -96,6 +97,8 @@ export async function GET(
 
 /**
  * PATCH /api/submissions/[id] - Update submission
+ * Access: All authenticated users in the organization (association, member, reviewer, admin, superadmin)
+ * Note: Additional business logic may restrict updates based on submission status and user role
  */
 export async function PATCH(
   request: NextRequest,

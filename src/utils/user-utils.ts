@@ -32,7 +32,7 @@ export async function fetchUserInfo(userId: string): Promise<UserInfo> {
       firstName,
       lastName,
       fullName,
-      role: 'user' // Default role, can be enhanced with organization roles if needed
+      role: 'association' // Default role, can be enhanced with organization roles if needed
     }
   } catch (error) {
     console.error(`Error fetching user info for ${userId}:`, error)
@@ -41,7 +41,7 @@ export async function fetchUserInfo(userId: string): Promise<UserInfo> {
     return {
       id: userId,
       email: 'Unknown User',
-      role: 'user'
+      role: 'association'
     }
   }
 }
@@ -71,7 +71,7 @@ export async function fetchMultipleUsersInfo(userIds: string[]): Promise<Record<
         firstName,
         lastName,
         fullName,
-        role: 'user'
+        role: 'association'
       }
     })
 
@@ -81,7 +81,7 @@ export async function fetchMultipleUsersInfo(userIds: string[]): Promise<Record<
         userMap[userId] = {
           id: userId,
           email: 'Unknown User',
-          role: 'user'
+          role: 'association'
         }
       }
     })
@@ -96,7 +96,7 @@ export async function fetchMultipleUsersInfo(userIds: string[]): Promise<Record<
       fallbackMap[userId] = {
         id: userId,
         email: 'Unknown User',
-        role: 'user'
+        role: 'association'
       }
     })
     return fallbackMap

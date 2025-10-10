@@ -309,7 +309,7 @@ export async function POST(request: NextRequest) {
         user: {
           id: userId,
           email: reviewer?.email || 'Unknown User',
-          role: 'reviewer'
+          role: 'reviewer' // This is the role context for the comment, not the user's actual role
         }
       }
     }, { status: 200 })

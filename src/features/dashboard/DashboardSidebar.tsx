@@ -125,13 +125,13 @@ export const DashboardSidebar = () => {
                 const previousItem = menu[index - 1];
                 
                 // Add separator when transitioning between different role groups
-                // Core workflow (user, chef, admin, superadmin) -> Review & Reporting (chef, admin, superadmin)
-                if (previousItem?.roles.includes('user') && !currentItem.roles.includes('user')) {
+                // Core workflow (association, member, reviewer, admin, superadmin) -> Review & Reporting (reviewer, admin, superadmin)
+                if (previousItem?.roles.includes('association') && !currentItem.roles.includes('association')) {
                   return true;
                 }
                 
                 // Add separator when transitioning from Review & Reporting to Admin Tools
-                if (previousItem?.roles.includes('chef') && !currentItem.roles.includes('chef')) {
+                if (previousItem?.roles.includes('reviewer') && !currentItem.roles.includes('reviewer')) {
                   return true;
                 }
                 

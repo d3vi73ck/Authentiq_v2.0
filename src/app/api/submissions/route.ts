@@ -9,6 +9,7 @@ import { OrganizationService } from '@/services/organization'
 /**
  * GET /api/submissions - List submissions for current organization
  * Query params: status, limit, offset
+ * Access: All authenticated users in the organization
  */
 export async function GET(request: NextRequest) {
   try {
@@ -108,6 +109,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/submissions - Create new submission
+ * Access: All authenticated users in the organization (association, member, reviewer, admin, superadmin)
  */
 export async function POST(request: NextRequest) {
   console.log('🔍 POST /api/submissions - Request received')

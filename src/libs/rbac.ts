@@ -11,7 +11,7 @@ import { auth } from '@clerk/nextjs/server'
  */
 
 // Define user roles
-export type UserRole = 'user' | 'chef' | 'admin' | 'superadmin'
+export type UserRole = 'association' | 'member' | 'reviewer' | 'admin' | 'superadmin'
 
 /**
  * Get user role from Clerk organization membership (Server only)
@@ -30,60 +30,60 @@ export async function getUserRole(): Promise<UserRole | null> {
     // Fetch user organization memberships from Clerk
     const client = await clerkClient()
     
-    // If no organization ID, fall back to user role
+    // If no organization ID, fall back to association role
     if (!orgId) {
-      return 'user'
+      return 'association'
     }
 
     // Get organization membership for the current user and organization
     const memberships = await client.organizations.getOrganizationMembershipList({
       organizationId: orgId,
-      userId: [userId],
     })
     
-    // If no memberships found, fall back to user role
+    // If no memberships found, fall back to association role
     if (!memberships.data || memberships.data.length === 0) {
-      return 'user'
+      return 'association'
     }
 
     // Get the first membership (should only be one for this user in this org)
     const membership = memberships.data[0]
     const clerkRole = membership?.role
     
-    // If no role found in membership, fall back to user role
+    // If no role found in membership, fall back to association role
     if (!clerkRole) {
-      return 'user'
+      return 'association'
     }
     
     // Map Clerk roles to RBAC roles
-    // Clerk uses: 'org:admin', 'org:member', 'org:basic_member'
-    // We map to: 'admin', 'chef', 'user'
+    // Clerk uses: 'org:admin', 'org:association', 'org:member', 'org:reviewer'
+    // We map to: 'admin', 'association', 'member', 'reviewer'
     const roleMapping: Record<string, UserRole> = {
       'org:admin': 'admin',
-      'org:member': 'chef',
-      'org:basic_member': 'user'
+      'org:association': 'association',
+      'org:member': 'member',
+      'org:reviewer': 'reviewer'
     }
     
-    // Return mapped role or fall back to 'user' if no mapping found
-    const mappedRole = roleMapping[clerkRole] || 'user'
+    // Return mapped role or fall back to 'association' if no mapping found
+    const mappedRole = roleMapping[clerkRole] || 'association'
     console.log('Mapped role:', mappedRole)
     return mappedRole
   } catch (error) {
     console.error('Error getting user role from organization membership:', error)
-    // Fall back to user role on error
-    return 'user'
+    // Fall back to association role on error
+    return 'association'
   }
 }
 
 /**
  * Check if user can review submissions (Server only)
- * Review roles: chef, admin, superadmin
+ * Review roles: reviewer, admin, superadmin
  */
 export async function canReview(): Promise<boolean> {
   const role = await getUserRole()
   if (!role) return false
   
-  const reviewRoles: UserRole[] = ['chef', 'admin', 'superadmin']
+  const reviewRoles: UserRole[] = ['reviewer', 'admin', 'superadmin']
   return reviewRoles.includes(role)
 }
 

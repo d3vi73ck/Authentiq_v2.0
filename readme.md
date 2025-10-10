@@ -55,7 +55,7 @@ Runs on your VPS (Dockerized)
 | Entity       | Description                                                            |
 | ------------ | ---------------------------------------------------------------------- |
 | `Tenant`     | Represents each ONG (name, domain, plan, settings)                     |
-| `User`       | Belongs to a tenant; has role: association, chef, admin, or superadmin |
+| `User`       | Belongs to a tenant; has role: association, member, reviewer, admin, or superadmin |
 | `Submission` | One expense submission; linked to tenant                               |
 | `File`       | Uploaded justificatif (stored in MinIO with OCR + AI metadata)         |
 | `Comment`    | Review notes between chef/admin and association                        |
@@ -156,7 +156,7 @@ A single ONG can:
 
 ### 🔹 MVP Features
 
-* Multi-role auth (association / chef / admin)
+* Multi-role auth (association / member / reviewer / admin / superadmin)
 * File uploads (MinIO)
 * OCR text extraction
 * AI auto-fill (optional)

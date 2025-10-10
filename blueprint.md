@@ -271,7 +271,7 @@ export async function POST(req: NextRequest) {
 ```ts
 // src/lib/rbac.ts
 export function canReview(role: string) {
-  return role === "chef" || role === "admin" || role === "superadmin";
+  return role === "reviewer" || role === "admin" || role === "superadmin";
 }
 export function canSubmit(role: string) {
   return role === "association" || canReview(role);

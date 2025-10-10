@@ -12,22 +12,23 @@ import { useEffect } from 'react'
  */
 
 // Define user roles
-export type UserRole = 'user' | 'chef' | 'admin' | 'superadmin'
+export type UserRole = 'association' | 'member' | 'reviewer' | 'admin' | 'superadmin'
 
 // Map Clerk organization roles to RBAC roles
-// Clerk uses: 'org:admin', 'org:member', 'org:basic_member'
-// We map to: 'admin', 'chef', 'user'
+// Clerk uses: 'org:admin', 'org:association', 'org:member', 'org:reviewer'
+// We map to: 'admin', 'association', 'member', 'reviewer'
 const roleMapping: Record<string, UserRole> = {
   'org:admin': 'admin',
-  'org:member': 'chef',
-  'org:basic_member': 'user'
+  'org:association': 'association',
+  'org:member': 'member',
+  'org:reviewer': 'reviewer'
 }
 
 console.log('🔍 RBAC Client - Available role mappings:', roleMapping);
 
 /**
  * Check if user can review submissions (Client only)
- * Review roles: chef, admin, superadmin
+ * Review roles: reviewer, admin, superadmin
  */
 export function useCanReview(): boolean {
   const { user, isLoaded: userLoaded } = useUser()
@@ -47,7 +48,7 @@ export function useCanReview(): boolean {
   }
   
   // Get role from organization membership (primary method) - matches server-side logic
-  let role: UserRole = 'user'
+  let role: UserRole = 'association'
   
   if (organization && membership) {
     const clerkRole = membership.role
@@ -61,7 +62,7 @@ export function useCanReview(): boolean {
     
     if (clerkRole) {
       // Map Clerk organization role to RBAC role (matches server-side mapping)
-      role = roleMapping[clerkRole] || 'user'
+      role = roleMapping[clerkRole] || 'association'
       console.log('🔍 useCanReview - Organization role mapping:', {
         clerkRole,
         mappedRole: role,
@@ -69,19 +70,19 @@ export function useCanReview(): boolean {
         mappingFound: !!roleMapping[clerkRole]
       })
     } else {
-      console.log('🔍 useCanReview - No organization membership role found, defaulting to user')
+      console.log('🔍 useCanReview - No organization membership role found, defaulting to association')
     }
   } else {
-    console.log('🔍 useCanReview - No organization context or membership, defaulting to user role')
+    console.log('🔍 useCanReview - No organization context or membership, defaulting to association role')
   }
   
   // Fallback: Check user metadata if no organization role found
-  if (role === 'user' && user.publicMetadata?.role) {
+  if (role === 'association' && user.publicMetadata?.role) {
     role = user.publicMetadata.role as UserRole
     console.log('🔍 useCanReview - Using role from user metadata:', role)
   }
   
-  const reviewRoles: UserRole[] = ['chef', 'admin', 'superadmin']
+  const reviewRoles: UserRole[] = ['reviewer', 'admin', 'superadmin']
   const canReview = reviewRoles.includes(role)
   
   console.log('🔍 useCanReview - Final result:', {
@@ -105,8 +106,8 @@ export function useCanManageOrganization(): boolean {
     return false
   }
   
-  // Retrieve role from Clerk user metadata, default to 'user' if not set
-  const role: UserRole = (user.publicMetadata?.role as UserRole) || 'user'
+  // Retrieve role from Clerk user metadata, default to 'association' if not set
+  const role: UserRole = (user.publicMetadata?.role as UserRole) || 'association'
   
   const adminRoles: UserRole[] = ['admin', 'superadmin']
   return adminRoles.includes(role)
@@ -134,7 +135,7 @@ export function useUserPermissions() {
   // Return default permissions if user is not authenticated
   if (!user) {
     return {
-      role: 'user' as UserRole,
+      role: 'association' as UserRole,
       canReview: false,
       canManageOrganization: false,
       isAdmin: false,
@@ -144,7 +145,7 @@ export function useUserPermissions() {
   }
   
   // Get role from organization membership (primary method)
-  let role: UserRole = 'user'
+  let role: UserRole = 'association'
   
   if (organization && membership) {
     const clerkRole = membership.role
@@ -158,7 +159,7 @@ export function useUserPermissions() {
     
     if (clerkRole) {
       // Map Clerk organization role to RBAC role
-      role = roleMapping[clerkRole] || 'user'
+      role = roleMapping[clerkRole] || 'association'
       console.log('🔍 RBAC Client - Organization role mapping:', {
         clerkRole,
         mappedRole: role,
@@ -166,14 +167,14 @@ export function useUserPermissions() {
         mappingFound: !!roleMapping[clerkRole]
       })
     } else {
-      console.log('🔍 RBAC Client - No organization membership role found, defaulting to user')
+      console.log('🔍 RBAC Client - No organization membership role found, defaulting to association')
     }
   } else {
-    console.log('🔍 RBAC Client - No organization context or membership, defaulting to user role')
+    console.log('🔍 RBAC Client - No organization context or membership, defaulting to association role')
   }
   
   // Fallback: Check user metadata if no organization role found
-  if (role === 'user' && user.publicMetadata?.role) {
+  if (role === 'association' && user.publicMetadata?.role) {
     role = user.publicMetadata.role as UserRole
     console.log('🔍 RBAC Client - Using role from user metadata:', role)
   }
@@ -183,7 +184,7 @@ export function useUserPermissions() {
     finalRole: role
   })
   
-  const reviewRoles: UserRole[] = ['chef', 'admin', 'superadmin']
+  const reviewRoles: UserRole[] = ['reviewer', 'admin', 'superadmin']
   const adminRoles: UserRole[] = ['admin', 'superadmin']
   
   const permissions = {

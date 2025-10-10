@@ -4,12 +4,13 @@ import { organizationSchema } from '@/models/Schema'
 import { eq } from 'drizzle-orm'
 
 // Role mapping from our RBAC to Clerk organization roles
-// Clerk roles: 'basic_member' | 'admin'
+// Clerk roles: 'org:association' | 'org:member' | 'org:reviewer' | 'org:admin'
 const ROLE_MAPPING = {
-  association: 'basic_member',
-  chef: 'basic_member',
-  admin: 'admin',
-  superadmin: 'admin',
+  association: 'org:association',
+  member: 'org:member',
+  reviewer: 'org:reviewer',
+  admin: 'org:admin',
+  superadmin: 'org:admin',
 } as const
 
 /**
@@ -162,7 +163,7 @@ export class OrganizationService {
   /**
    * Send organization invitation using Clerk API
    */
-  static async sendInvitation(organizationId: string, email: string, role: keyof typeof ROLE_MAPPING) {
+  static async sendInvitation(organizationId: string, email: string, role: 'association' | 'member' | 'reviewer' | 'admin' | 'superadmin') {
     try {
       console.log(`🔍 Sending invitation to ${email} for organization ${organizationId} with role ${role}`)
       
@@ -175,7 +176,7 @@ export class OrganizationService {
       const invitation = await client.organizations.createOrganizationInvitation({
         organizationId,
         emailAddress: email,
-        role: clerkRole as any, // Clerk expects 'basic_member' | 'admin' but our types conflict
+        role: clerkRole as any, // Clerk expects 'org:association' | 'org:member' | 'org:reviewer' | 'org:admin' but our types conflict
         // Clerk will handle email sending automatically
       })
 

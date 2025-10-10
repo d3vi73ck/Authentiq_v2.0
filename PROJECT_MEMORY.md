@@ -71,7 +71,7 @@ han# Authentiq Project Memory
 - Role-based permissions (user, chef, admin, superadmin)
 
 **RBAC Implementation**
-- `canReview()`: chef, admin, superadmin roles
+- `canReview()`: reviewer, admin, superadmin roles
 - `canManageOrganization()`: admin, superadmin roles
 - Middleware-based route protection
 
@@ -258,7 +258,7 @@ services:
 **Permission Consistency Rules:**
 - Navigation menu items filtered based on user role permissions
 - Page-level access control enforced through middleware and component guards
-- Review permissions require `chef`, `admin`, or `superadmin` roles
+- Review permissions require `reviewer`, `admin`, or `superadmin` roles
 - Organization management requires `admin` or `superadmin` roles
 
 ### Navigation Architecture & Mobile Responsiveness

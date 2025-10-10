@@ -128,7 +128,8 @@ export default function OrganizationMembersPage() {
     const colors = {
       admin: 'bg-purple-100 text-purple-800',
       superadmin: 'bg-red-100 text-red-800',
-      chef: 'bg-blue-100 text-blue-800',
+      reviewer: 'bg-blue-100 text-blue-800',
+      member: 'bg-orange-100 text-orange-800',
       association: 'bg-green-100 text-green-800',
     }
     return colors[role as keyof typeof colors] || 'bg-gray-100 text-gray-800'
@@ -237,7 +238,8 @@ export default function OrganizationMembersPage() {
                   onChange={(e) => setInviteRole(e.target.value)}
                 >
                   <option value="association">{t('role_association')}</option>
-                  <option value="chef">{t('role_chef')}</option>
+                  <option value="member">{t('role_member')}</option>
+                  <option value="reviewer">{t('role_reviewer')}</option>
                   <option value="admin">{t('role_admin')}</option>
                 </select>
               </div>

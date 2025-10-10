@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
       user: {
         id: userId,
         email: user?.email || 'Unknown User',
-        role: canUserReview ? 'reviewer' : 'user'
+        role: canUserReview ? 'reviewer' : 'association' // This is the role context for the comment, not the user's actual role
       }
     }
 
