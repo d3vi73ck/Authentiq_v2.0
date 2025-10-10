@@ -57,7 +57,7 @@ export default function FileDrop({
         formData.append('submissionId', submissionId)
         formData.append('kind', selectedDocumentType)
         formData.append('processOCR', 'true') // Enable OCR processing
-        formData.append('processAI', 'true') // Enable AI analysis
+        formData.append('processAI', 'false') // Disable AI analysis during upload
 
         const response = await fetch('/api/upload', {
           method: 'POST',

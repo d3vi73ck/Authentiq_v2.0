@@ -61,10 +61,28 @@ export async function GET(
       .where(eq(commentSchema.submissionId, submissionId))
       .orderBy(commentSchema.createdAt)
 
+    // Get user information for submission creator
+    let user = {
+      id: submission.createdBy,
+      email: 'Unknown User',
+      role: 'user'
+    }
+
+    // Get user information for comments
+    const commentsWithUsers = comments.map((comment) => ({
+      ...comment,
+      user: {
+        id: comment.userId,
+        email: 'Unknown User',
+        role: 'user'
+      }
+    }))
+
     const submissionWithRelations = {
       ...submission,
       files,
-      comments
+      comments: commentsWithUsers,
+      user
     }
 
     return NextResponse.json({ submission: submissionWithRelations })
@@ -154,10 +172,28 @@ export async function PATCH(
       .where(eq(commentSchema.submissionId, submissionId))
       .orderBy(commentSchema.createdAt)
 
+    // Get user information for submission creator
+    let user = {
+      id: updatedSubmission.createdBy,
+      email: 'Unknown User',
+      role: 'user'
+    }
+
+    // Get user information for comments
+    const commentsWithUsers = comments.map((comment) => ({
+      ...comment,
+      user: {
+        id: comment.userId,
+        email: 'Unknown User',
+        role: 'user'
+      }
+    }))
+
     const submissionWithRelations = {
       ...updatedSubmission,
       files,
-      comments
+      comments: commentsWithUsers,
+      user
     }
 
     return NextResponse.json({ submission: submissionWithRelations })

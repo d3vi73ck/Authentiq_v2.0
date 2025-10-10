@@ -75,7 +75,10 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
   const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>('')
+  const [analyzingFiles, setAnalyzingFiles] = useState<Set<string>>(new Set())
+  const [analysisErrors, setAnalysisErrors] = useState<Record<string, string>>({})
   const canUserReview = useCanReview()
+
 
   const isFinalized = ['APPROVED', 'REJECTED'].includes(submission.status)
 
@@ -138,6 +141,51 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
     }).format(amount)
   }
 
+  const handleAnalyzeWithAI = async (fileId: string) => {
+    setAnalyzingFiles(prev => new Set(prev).add(fileId))
+    setAnalysisErrors(prev => ({ ...prev, [fileId]: '' }))
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileId,
+          processOCR: true,
+          processAI: true,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'AI analysis failed')
+      }
+
+      const result = await response.json()
+      
+      // Refresh the page to show updated AI data
+      if (onDecision) {
+        onDecision()
+      }
+    } catch (err) {
+      console.error('AI analysis error:', err)
+      setAnalysisErrors(prev => ({
+        ...prev,
+        [fileId]: err instanceof Error ? err.message : 'AI analysis failed'
+      }))
+    } finally {
+      setAnalyzingFiles(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(fileId)
+        return newSet
+      })
+    }
+  }
+
+  const isAnalyzing = (fileId: string) => analyzingFiles.has(fileId)
+
   const getStatusBadge = (status: string) => {
     const colors = {
       DRAFT: 'bg-gray-100 text-gray-800',
@@ -172,7 +220,7 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
               {submission.title || `Expense ${submission.type}`}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Submitted by {submission.user.email} on {formatDate(submission.createdAt)}
+              Submitted by {submission.user?.email || 'Unknown User'} on {formatDate(submission.createdAt)}
             </p>
           </div>
           <div className="flex items-center space-x-3">
@@ -281,10 +329,32 @@ export default function ReviewPanel({ submission, onDecision }: ReviewPanelProps
                   </div>
                 )}
                 
-                {/* No AI Analysis Message */}
+                {/* No AI Analysis Message with Manual Trigger */}
                 {!file.aiData && (
                   <div className="p-3 bg-gray-50 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">No AI analysis available for this document</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-2">No AI analysis available for this document</p>
+                        {analysisErrors[file.id] && (
+                          <p className="text-sm text-red-600">{analysisErrors[file.id]}</p>
+                        )}
+                      </div>
+                      <Button
+                        onClick={() => handleAnalyzeWithAI(file.id)}
+                        disabled={isAnalyzing(file.id)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {isAnalyzing(file.id) ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500 mr-2"></div>
+                            Analyzing...
+                          </>
+                        ) : (
+                          'Analyze with AI'
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

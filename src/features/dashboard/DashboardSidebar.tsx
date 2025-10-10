@@ -57,13 +57,13 @@ export const DashboardSidebar = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative">
       {/* Sidebar */}
       <aside
         className={`
           bg-background border-r border-border transition-all duration-300 ease-in-out
           ${isCollapsed ? 'w-16' : 'w-64'}
-          flex flex-col
+          flex flex-col z-50
         `}
       >
         {/* Header */}
@@ -192,6 +192,15 @@ export const DashboardSidebar = () => {
                         ${isCollapsed ? 'justify-center' : ''}
                         ${isActive ? 'bg-accent text-accent-foreground' : ''}
                       `}
+                      onClick={() => {
+                        // Close sidebar on mobile when menu item is clicked
+                        if (!isCollapsed) {
+                          const isMobile = window.innerWidth < 1024;
+                          if (isMobile) {
+                            setIsCollapsed(true);
+                          }
+                        }
+                      }}
                     >
                       <div className="w-4 h-4 flex items-center justify-center">
                         {getIconComponent(item.icon)}
@@ -237,8 +246,9 @@ export const DashboardSidebar = () => {
       {!isCollapsed && (
         <div
           className="
-            lg:hidden fixed inset-0 bg-background/80 z-40
-            transition-opacity duration-300 opacity-100 pointer-events-auto
+            lg:hidden fixed left-64 top-0 right-0 bottom-0 bg-background/80 z-40
+            transition-opacity duration-300 opacity-100
+            pointer-events-auto
           "
           onClick={() => setIsCollapsed(true)}
         />
