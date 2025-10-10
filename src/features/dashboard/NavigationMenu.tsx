@@ -20,16 +20,16 @@ export const defaultNavigationItems: NavigationItem[] = [
     icon: 'Home',
   },
   {
-    href: '/submissions',
-    label: 'Submissions',
-    roles: ['user', 'chef', 'admin', 'superadmin'],
-    icon: 'FileText',
-  },
-  {
     href: '/submissions/new',
     label: 'New Expense',
     roles: ['user', 'chef', 'admin', 'superadmin'],
     icon: 'PlusCircle',
+  },
+  {
+    href: '/submissions',
+    label: 'Submissions',
+    roles: ['user', 'chef', 'admin', 'superadmin'],
+    icon: 'FileText',
   },
   {
     href: '/dashboard/user-profile',
@@ -43,24 +43,27 @@ export const useNavigationMenu = () => {
   const t = useTranslations('DashboardLayout');
   const permissions = useUserPermissions();
 
+  console.log('🔍 Navigation Menu - User permissions:', {
+    role: permissions.role,
+    canReview: permissions.canReview,
+    isLoading: permissions.isLoading,
+    timestamp: new Date().toISOString()
+  });
+
   // If permissions are not loaded yet, return default items
   if (!permissions.role) {
+    console.log('🔍 Navigation Menu - No role yet, returning default items');
     return defaultNavigationItems;
   }
 
   // Define all navigation items with their required roles
   const navigationItems: NavigationItem[] = [
+    // 👥 Association (Basic User) - Core workflow
     {
       href: '/dashboard',
       label: t('home'),
       roles: ['user', 'chef', 'admin', 'superadmin'],
       icon: 'Home',
-    },
-    {
-      href: '/submissions',
-      label: t('submissions'),
-      roles: ['user', 'chef', 'admin', 'superadmin'],
-      icon: 'FileText',
     },
     {
       href: '/submissions/new',
@@ -69,16 +72,18 @@ export const useNavigationMenu = () => {
       icon: 'PlusCircle',
     },
     {
+      href: '/submissions',
+      label: t('submissions'),
+      roles: ['user', 'chef', 'admin', 'superadmin'],
+      icon: 'FileText',
+    },
+    
+    // 👩‍🍳 Chef / Admin / Superadmin - Review & Reporting
+    {
       href: '/review',
       label: t('review'),
       roles: ['chef', 'admin', 'superadmin'],
       icon: 'ClipboardCheck',
-    },
-    {
-      href: '/admin/dashboard',
-      label: t('admin_dashboard'),
-      roles: ['admin', 'superadmin'],
-      icon: 'LayoutDashboard',
     },
     {
       href: '/admin/reports',
@@ -92,17 +97,19 @@ export const useNavigationMenu = () => {
       roles: ['admin', 'superadmin'],
       icon: 'Download',
     },
+    
+    // 🏢 Admin Tools - Organization Management
     {
-      href: '/admin/settings',
-      label: t('admin_settings'),
+      href: '/admin/dashboard',
+      label: t('admin_dashboard'),
       roles: ['admin', 'superadmin'],
-      icon: 'Settings',
+      icon: 'LayoutDashboard',
     },
     {
-      href: '/admin/billing',
-      label: t('admin_billing'),
+      href: '/dashboard/organization-profile',
+      label: t('organization_settings'),
       roles: ['admin', 'superadmin'],
-      icon: 'CreditCard',
+      icon: 'Building',
     },
     {
       href: '/dashboard/organization/members',
@@ -111,11 +118,19 @@ export const useNavigationMenu = () => {
       icon: 'Users',
     },
     {
-      href: '/dashboard/organization-profile',
-      label: t('organization_settings'),
+      href: '/admin/billing',
+      label: t('admin_billing'),
       roles: ['admin', 'superadmin'],
-      icon: 'Building',
+      icon: 'CreditCard',
     },
+    {
+      href: '/admin/settings',
+      label: t('admin_settings'),
+      roles: ['admin', 'superadmin'],
+      icon: 'Settings',
+    },
+    
+    // 👤 User Profile - Common to all roles
     {
       href: '/dashboard/user-profile',
       label: t('user_profile'),
@@ -126,7 +141,20 @@ export const useNavigationMenu = () => {
 
   // Filter navigation items based on user role
   const filteredItems = navigationItems.filter(item => {
-    return item.roles.includes(permissions.role!);
+    const hasAccess = item.roles.includes(permissions.role!);
+    console.log('🔍 Navigation Menu - Item access check:', {
+      href: item.href,
+      label: item.label,
+      requiredRoles: item.roles,
+      userRole: permissions.role,
+      hasAccess
+    });
+    return hasAccess;
+  });
+
+  console.log('🔍 Navigation Menu - Final filtered items:', {
+    totalItems: filteredItems.length,
+    items: filteredItems.map(item => ({ href: item.href, label: item.label }))
   });
 
   return filteredItems;

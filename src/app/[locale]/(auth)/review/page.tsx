@@ -67,23 +67,39 @@ export default function ReviewPage() {
   })
 
   useEffect(() => {
+    console.log('🔍 Review Page - Permission check triggered:', {
+      isLoaded,
+      userId,
+      canUserReview,
+      timestamp: new Date().toISOString()
+    })
+    
     if (isLoaded) {
       checkPermissions()
     }
   }, [isLoaded, canUserReview])
 
   const checkPermissions = () => {
+    console.log('🔍 Review Page - Checking permissions:', {
+      userId,
+      canUserReview,
+      permissionDeniedMessage: t('permission_denied')
+    })
+    
     if (!userId) {
+      console.log('🔍 Review Page - No user ID, redirecting to sign-in')
       router.push('/sign-in')
       return
     }
 
     if (!canUserReview) {
+      console.log('🔍 Review Page - Permission denied, setting error')
       setError(t('permission_denied'))
       setLoading(false)
       return
     }
 
+    console.log('🔍 Review Page - Permission granted, loading submissions')
     loadSubmissions()
   }
 

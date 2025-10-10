@@ -244,12 +244,194 @@ services:
 - Excellent performance
 - Strong TypeScript support
 
+## Recent Enhancements & Learnings
+
+### RBAC System Implementation & Fixes
+
+**Key Learnings:**
+- **Role Mapping Consistency**: Implemented consistent role mapping between Clerk organization roles and application RBAC roles
+  - `org:admin` → `admin`
+  - `org:member` → `chef`
+  - `org:basic_member` → `user`
+- **Server-Client Parity**: Ensured identical role resolution logic between server-side ([`rbac.ts`](src/libs/rbac.ts:61)) and client-side ([`rbac-client.ts`](src/libs/rbac-client.ts:20)) implementations
+- **Organization Membership Priority**: Prioritize organization membership roles over user metadata for accurate multi-tenant role assignment
+- **Fallback Strategy**: Implemented graceful fallback to user role when organization context is unavailable
+
+**Permission Consistency Rules:**
+- Navigation menu items filtered based on user role permissions
+- Page-level access control enforced through middleware and component guards
+- Review permissions require `chef`, `admin`, or `superadmin` roles
+- Organization management requires `admin` or `superadmin` roles
+
+### Navigation Architecture & Mobile Responsiveness
+
+**Sidebar Implementation:**
+- **Collapsible Design**: Responsive sidebar that collapses on mobile and expands on desktop
+- **Mobile-First Behavior**: Sidebar starts collapsed on mobile devices, expanded on desktop
+- **Overlay Pattern**: Mobile overlay that closes sidebar when clicking outside
+- **Icon-Only Mode**: Collapsed state shows only icons for space efficiency
+
+**Navigation Menu Organization:**
+- **Role-Based Filtering**: Dynamic menu filtering based on user permissions ([`NavigationMenu.tsx`](src/features/dashboard/NavigationMenu.tsx:143))
+- **Logical Grouping**: Menu items organized into logical sections with visual separators
+- **Progressive Disclosure**: Higher-privilege features revealed only to appropriate roles
+
+**Mobile Responsiveness Patterns:**
+- **Breakpoint-Aware**: Responsive behavior based on `window.innerWidth` thresholds
+- **Touch-Friendly**: Larger touch targets and appropriate spacing for mobile interaction
+- **Smooth Transitions**: CSS transitions for sidebar collapse/expand animations
+
+### Internationalization Patterns & Error Handling
+
+**Translation Structure:**
+- **Namespace Organization**: Translations organized by feature areas (DashboardLayout, ErrorPages, etc.)
+- **Consistent Keys**: Standardized key naming across all translation files
+- **Dynamic Path Generation**: [`getI18nPath()`](src/utils/Helpers.ts) utility for locale-aware routing
+
+**Error Page System:**
+- **Custom Error Pages**: Implemented 404, 500, and generic error pages with consistent design
+- **User-Friendly Messaging**: Clear, actionable error messages with appropriate tone
+- **Development Details**: Error stack traces shown only in development environment
+- **Support Integration**: Direct links to support channels and helpful navigation options
+
+**Error Handling Patterns:**
+- **Graceful Degradation**: Fallback to default navigation when permissions are loading
+- **Loading States**: Clear loading indicators during permission resolution
+- **Error Boundaries**: Comprehensive error boundaries with user-friendly fallback UI
+
+### User Experience Patterns
+
+**Permission-Driven UI:**
+- **Progressive Enhancement**: UI elements appear/disappear based on user permissions
+- **Contextual Navigation**: Navigation adapts to user's current organization context
+- **Visual Hierarchy**: Clear visual separation between different permission levels
+
+**Mobile Experience:**
+- **Collapsible Navigation**: Space-efficient sidebar that adapts to screen size
+- **Touch Optimization**: Appropriate touch targets and gesture support
+- **Performance Optimization**: Efficient re-rendering and state management
+
+**Accessibility Considerations:**
+- **Keyboard Navigation**: Full keyboard support for all interactive elements
+- **Screen Reader Support**: Proper ARIA labels and semantic HTML structure
+- **Focus Management**: Logical focus order and visible focus indicators
+
+## Technical Architecture Updates
+
+### New Components & Patterns
+
+**RBAC System Architecture:**
+- **Server-Side RBAC** ([`rbac.ts`](src/libs/rbac.ts)): Organization-based role resolution for server components and API routes
+- **Client-Side RBAC** ([`rbac-client.ts`](src/libs/rbac-client.ts)): React hooks for client component permission checks
+- **Unified Role Mapping**: Consistent role definitions across server and client
+
+**Navigation System:**
+- **Dashboard Sidebar** ([`DashboardSidebar.tsx`](src/features/dashboard/DashboardSidebar.tsx)): Responsive, collapsible navigation with organization context
+- **Navigation Menu Hook** ([`NavigationMenu.tsx`](src/features/dashboard/NavigationMenu.tsx)): Dynamic menu generation based on user permissions
+- **Icon Mapping System**: Centralized icon component mapping for consistent UI
+
+**Error Handling Architecture:**
+- **Custom Error Pages** ([`404.tsx`](src/app/[locale]/404/page.tsx), [`500.tsx`](src/app/[locale]/500/page.tsx), [`error.tsx`](src/app/[locale]/error.tsx)): Consistent error page design and behavior
+- **Error Boundary Pattern**: Next.js error boundaries with custom error components
+- **Development vs Production**: Different error detail exposure based on environment
+
+### Authentication & Authorization Enhancements
+
+**Role Mapping Implementation:**
+```typescript
+// Clerk organization roles to RBAC roles mapping
+const roleMapping: Record<string, UserRole> = {
+  'org:admin': 'admin',
+  'org:member': 'chef',
+  'org:basic_member': 'user'
+}
+```
+
+**Permission Hierarchy:**
+- **User**: Basic expense submission and viewing
+- **Chef**: Review capabilities + user permissions
+- **Admin**: Organization management + chef permissions
+- **Superadmin**: System-wide administration + admin permissions
+
+**Access Control Patterns:**
+- **Route Protection**: Middleware-based route access control
+- **Component-Level Guards**: Conditional rendering based on permissions
+- **API Authorization**: Server-side permission validation in API routes
+
+### Navigation Architecture
+
+**Menu Structure:**
+1. **Core Workflow** (All roles): Home, New Expense, Submissions
+2. **Review & Reporting** (Chef+): Review, Reports, Export
+3. **Admin Tools** (Admin+): Admin Dashboard, Organization Settings, Members, Billing
+4. **User Profile** (All roles): User Profile
+
+**Mobile Behavior:**
+- **Auto-Collapse**: Sidebar automatically collapses on mobile devices
+- **Overlay Backdrop**: Click outside to close expanded sidebar on mobile
+- **Smooth Transitions**: CSS transitions for responsive state changes
+
+**Permission Consistency:**
+- Navigation menu filtering matches page-level access controls
+- Role-based menu item visibility ensures users only see accessible features
+- Fallback to default navigation during permission loading
+
+### Error Handling System
+
+**Error Page Types:**
+- **404 Not Found**: Custom page with helpful links and navigation options
+- **500 Internal Server Error**: Service status information and support contacts
+- **Generic Error**: Fallback error page with retry functionality
+
+**Error Recovery Patterns:**
+- **Retry Mechanism**: "Try Again" buttons for recoverable errors
+- **Alternative Navigation**: Multiple navigation options for error recovery
+- **Support Integration**: Direct access to support channels from error pages
+
+**Development Support:**
+- **Error Details**: Stack traces and error information in development mode
+- **Debug Information**: Comprehensive logging for troubleshooting
+- **Error Tracking**: Integration with error monitoring services
+
+## Development Status Updates
+
+### Completed Features
+- ✅ Multi-tenant authentication with Clerk
+- ✅ Expense submission creation and management
+- ✅ File upload with MinIO integration
+- ✅ OCR text extraction with Tesseract.js
+- ✅ Basic review workflow
+- ✅ Multi-language support (English/French)
+- ✅ Role-based access control
+- ✅ Database schema and migrations
+- ✅ **RBAC system with consistent role mapping**
+- ✅ **Responsive sidebar navigation with mobile support**
+- ✅ **Custom error pages (404, 500, generic)**
+- ✅ **Internationalization audit and consistency fixes**
+- ✅ **Permission consistency between navigation and page access**
+- ✅ **Mobile responsiveness patterns and fixes**
+- ✅ **Navigation menu organization and UX patterns**
+
+### In Progress
+- 🔄 AI document analysis integration
+- 🔄 Advanced review workflows
+- 🔄 Email notifications
+- 🔄 Reporting and analytics
+
+### Planned Features
+- 📋 Stripe billing integration
+- 📋 Advanced OCR for PDF processing
+- 📋 Document template system
+- 📋 Audit trail and compliance reporting
+- 📋 Mobile application
+
 ## Lessons Learned & Best Practices
 
 ### Multi-Tenant Security
 - Always validate organization context in API routes
 - Use database-level filtering for data isolation
 - Implement proper RBAC for different user roles
+- **Ensure role mapping consistency between authentication provider and application**
 
 ### File Processing
 - Use background processing for OCR/AI to avoid blocking requests
@@ -261,12 +443,17 @@ services:
 - Use efficient database indexing
 - Cache frequently accessed data
 - Optimize file upload/download with streaming
+- **Implement responsive design with mobile-first approach**
+- **Use CSS transitions for smooth UI state changes**
 
 ### Development Workflow
 - Use TypeScript for type safety
 - Implement comprehensive error handling
 - Follow consistent code formatting
 - Use automated testing and CI/CD
+- **Maintain server-client parity for critical business logic**
+- **Implement proper loading states for async operations**
+- **Use semantic versioning for component libraries**
 
 ## Integration Points
 

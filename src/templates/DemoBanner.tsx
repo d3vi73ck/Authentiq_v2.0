@@ -6,6 +6,6 @@ export const DemoBanner = () => (
   <StickyBanner>
     KifNdirou - 
     {' '}
-    <Link href="/sign-up">Explore the User Dashboard</Link>
+    <Link href="/sign-up">Demo</Link>
   </StickyBanner>
 );

@@ -56,10 +56,12 @@ export async function getUserRole(): Promise<UserRole | null> {
     }
     
     // Map Clerk roles to RBAC roles
+    // Clerk uses: 'org:admin', 'org:member', 'org:basic_member'
+    // We map to: 'admin', 'chef', 'user'
     const roleMapping: Record<string, UserRole> = {
-      'Admin': 'admin',
-      'association': 'chef',
-      'Member': 'user'
+      'org:admin': 'admin',
+      'org:member': 'chef',
+      'org:basic_member': 'user'
     }
     
     // Return mapped role or fall back to 'user' if no mapping found

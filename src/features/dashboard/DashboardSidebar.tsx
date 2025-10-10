@@ -114,9 +114,35 @@ export const DashboardSidebar = () => {
         {/* Navigation Menu */}
         <nav className="flex-1 p-4">
           <ul className="space-y-1">
-            {menu.map(item => {
+            {menu.map((item, index) => {
               const isActive = pathname.endsWith(item.href);
               
+              // Check if we need to add a separator before this item
+              const shouldAddSeparator = () => {
+                if (index === 0) return false; // Never add separator before first item
+                
+                const currentItem = item;
+                const previousItem = menu[index - 1];
+                
+                // Add separator when transitioning between different role groups
+                // Core workflow (user, chef, admin, superadmin) -> Review & Reporting (chef, admin, superadmin)
+                if (previousItem?.roles.includes('user') && !currentItem.roles.includes('user')) {
+                  return true;
+                }
+                
+                // Add separator when transitioning from Review & Reporting to Admin Tools
+                if (previousItem?.roles.includes('chef') && !currentItem.roles.includes('chef')) {
+                  return true;
+                }
+                
+                // Add separator before User Profile (common to all roles)
+                if (currentItem.href === '/dashboard/user-profile' && previousItem?.href !== '/dashboard/user-profile') {
+                  return true;
+                }
+                
+                return false;
+              };
+
               // Map icon names to actual Lucide components
               const getIconComponent = (iconName: string) => {
                 const iconProps = { className: 'w-4 h-4', size: 16 };
@@ -151,24 +177,31 @@ export const DashboardSidebar = () => {
               };
 
               return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`
-                      flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium
-                      transition-colors hover:bg-accent hover:text-accent-foreground
-                      ${isCollapsed ? 'justify-center' : ''}
-                      ${isActive ? 'bg-accent text-accent-foreground' : ''}
-                    `}
-                  >
-                    <div className="w-4 h-4 flex items-center justify-center">
-                      {getIconComponent(item.icon)}
-                    </div>
-                    <span className={isCollapsed ? 'hidden' : 'block'}>
-                      {item.label}
-                    </span>
-                  </Link>
-                </li>
+                <>
+                  {shouldAddSeparator() && (
+                    <li className={`py-2 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+                      <Separator />
+                    </li>
+                  )}
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`
+                        flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium
+                        transition-colors hover:bg-accent hover:text-accent-foreground
+                        ${isCollapsed ? 'justify-center' : ''}
+                        ${isActive ? 'bg-accent text-accent-foreground' : ''}
+                      `}
+                    >
+                      <div className="w-4 h-4 flex items-center justify-center">
+                        {getIconComponent(item.icon)}
+                      </div>
+                      <span className={isCollapsed ? 'hidden' : 'block'}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                </>
               );
             })}
           </ul>
@@ -204,7 +237,7 @@ export const DashboardSidebar = () => {
       {!isCollapsed && (
         <div
           className="
-            lg:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-40
+            lg:hidden fixed inset-0 bg-background/80 z-40
             transition-opacity duration-300 opacity-100 pointer-events-auto
           "
           onClick={() => setIsCollapsed(true)}
