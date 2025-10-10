@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
+  const t = useTranslations('Admin.export')
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -48,38 +50,38 @@ export default function ExportPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Export Data</h1>
-          <p className="mt-2 text-gray-600">
-            Download your organization's expense submission data
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t('description')}
           </p>
         </div>
         <Link
           href="/admin/reports"
           className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         >
-          Back to Reports
+          {t('back_to_reports')}
         </Link>
       </div>
 
       {/* Export Options */}
-      <div className="bg-white overflow-hidden shadow rounded-lg">
+      <div className="bg-card shadow-sm border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Export Options
+          <h3 className="text-lg font-medium text-foreground mb-4">
+            {t('export_options')}
           </h3>
           
           <div className="space-y-4">
             <div className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-900">CSV Export</h4>
+                  <h4 className="text-sm font-medium text-gray-900">{t('csv_export')}</h4>
                   <p className="text-sm text-gray-500 mt-1">
-                    Download all submission data in CSV format for analysis in Excel or other tools
+                    {t('csv_description')}
                   </p>
                   <ul className="text-sm text-gray-500 mt-2 space-y-1">
-                    <li>• Includes all submission fields and metadata</li>
-                    <li>• Compatible with Excel, Google Sheets, and data analysis tools</li>
-                    <li>• Contains file counts and comment information</li>
+                    <li>• {t('csv_features.feature1')}</li>
+                    <li>• {t('csv_features.feature2')}</li>
+                    <li>• {t('csv_features.feature3')}</li>
                   </ul>
                 </div>
                 <button
@@ -87,42 +89,42 @@ export default function ExportPage() {
                   disabled={isExporting}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isExporting ? 'Exporting...' : 'Download CSV'}
+                  {isExporting ? t('exporting') : t('download_csv')}
                 </button>
               </div>
             </div>
           </div>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="text-sm font-medium text-blue-800">Export Information</h4>
+            <h4 className="text-sm font-medium text-blue-800">{t('export_information')}</h4>
             <ul className="text-sm text-blue-700 mt-2 space-y-1">
-              <li>• Data is filtered to your organization only</li>
-              <li>• Includes submissions from all statuses (draft, submitted, approved, rejected)</li>
-              <li>• Export contains submission dates, amounts, file information, and review decisions</li>
-              <li>• File will be downloaded immediately when you click "Download CSV"</li>
+              <li>• {t('export_info_features.feature1')}</li>
+              <li>• {t('export_info_features.feature2')}</li>
+              <li>• {t('export_info_features.feature3')}</li>
+              <li>• {t('export_info_features.feature4')}</li>
             </ul>
           </div>
         </div>
       </div>
 
       {/* Quick Links */}
-      <div className="bg-white overflow-hidden shadow rounded-lg">
+      <div className="bg-card shadow-sm border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Quick Links
+          <h3 className="text-lg font-medium text-foreground mb-4">
+            {t('quick_links')}
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Link
               href="/admin/reports"
               className="inline-flex items-center px-4 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
-              View Reports Dashboard
+              {t('view_reports_dashboard')}
             </Link>
             <Link
               href="/submissions"
               className="inline-flex items-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
             >
-              Manage Submissions
+              {t('manage_submissions')}
             </Link>
           </div>
         </div>

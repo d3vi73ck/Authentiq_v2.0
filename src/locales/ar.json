@@ -249,5 +249,177 @@
       "RECU": " إيصال",
       "AUTRE": " أخرى"
     }
+  },
+  "Admin": {
+    "meta_title": "لوحة تحكم الإدارة",
+    "meta_description": "لوحة الإدارة لإدارة المنظمات والمستخدمين"
+  },
+  "ErrorPages": {
+    "meta_title": "خطأ - Authentiq",
+    "meta_description": "حدث خطأ أثناء معالجة طلبك",
+    "404": {
+      "title": "الصفحة غير موجودة",
+      "description": "عذرًا، لم نتمكن من العثور على الصفحة التي تبحث عنها.",
+      "suggestion": "ربما تم نقل الصفحة أو حذفها، أو ربما أدخلت عنوان URL غير صحيح.",
+      "go_home": "العودة للرئيسية",
+      "try_again": "حاول مرة أخرى",
+      "helpful_links": "هل تحتاج إلى مساعدة؟ إليك بعض الروابط المفيدة:",
+      "submissions_link": "التقديمات",
+      "review_link": "المراجعة",
+      "dashboard_link": "لوحة التحكم"
+    },
+    "500": {
+      "title": "خطأ داخلي في الخادم",
+      "description": "عذرًا، حدث خطأ من جانبنا.",
+      "suggestion": "نحن نعمل على إصلاح المشكلة. يرجى المحاولة مرة أخرى لاحقًا.",
+      "go_home": "العودة للرئيسية",
+      "try_again": "حاول مرة أخرى",
+      "service_status": "حالة الخدمة",
+      "team_notified": "تم إخطار فريقنا وهو يعمل على حل المشكلة.",
+      "contact_support": "إذا استمرت المشكلة، يرجى",
+      "contact_support_link": "الاتصال بفريق الدعم لدينا"
+    },
+    "generic": {
+      "title": "حدث خطأ ما",
+      "description": "حدث خطأ غير متوقع.",
+      "suggestion": "يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمرت المشكلة.",
+      "go_home": "العودة للرئيسية",
+      "try_again": "حاول مرة أخرى",
+      "error_details": "تفاصيل الخطأ (التطوير)",
+      "support_info": "إذا استمر هذا الخطأ، يرجى",
+      "support_info_link": "الاتصال بفريق الدعم لدينا",
+      "support_info_suffix": "وإدراج تفاصيل الخطأ أعلاه."
+    }
+  },
+  "Admin": {
+    "dashboard": {
+      "title": "لوحة تحكم المسؤول",
+      "description": "نظرة عامة على تقديمات نفقات وإحصائيات منظمتك",
+      "view_reports": "عرض التقارير",
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
+      "quick_actions": "إجراءات سريعة",
+      "view_all_submissions": "عرض جميع التقديمات",
+      "create_new_submission": "إنشاء تقديم جديد",
+      "access_denied": "تم رفض الوصول",
+      "access_denied_description": "تحتاج إلى صلاحيات المسؤول للوصول إلى هذه الصفحة.",
+      "organization_not_found": "لم يتم العثور على المنظمة",
+      "organization_not_found_description": "يرجى التحقق من عنوان URL والمحاولة مرة أخرى."
+    },
+    "billing": {
+      "title": "الفواتير والاشتراك",
+      "description": "إدارة اشتراك ومعلومات الدفع لمنظمتك",
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
+      "current_plan": "الخطة الحالية",
+      "pro_plan": "الخطة الاحترافية",
+      "pro_plan_price": "49 دولارًا/شهر لكل منظمة",
+      "active": "نشط",
+      "team_members": "أعضاء الفريق",
+      "organizations": "المنظمات",
+      "storage": "التخزين",
+      "manage_subscription": "إدارة الاشتراك",
+      "billing_information": "معلومات الفواتير",
+      "next_billing_date": "تاريخ الفاتورة التالي",
+      "payment_method": "طريقة الدفع",
+      "billing_email": "البريد الإلكتروني للفواتير",
+      "payment_history": "سجل الدفع",
+      "paid": "مدفوع",
+      "view_full_history": "عرض السجل الكامل",
+      "upgrade_options": "خيارات الترقية",
+      "enterprise_plan": "الخطة المؤسسية",
+      "enterprise_plan_price": "99 دولارًا/شهر لكل منظمة",
+      "unlimited_team_members": "أعضاء فريق غير محدودين",
+      "unlimited_organizations": "منظمات غير محدودة",
+      "priority_support": "دعم ذو أولوية",
+      "upgrade": "ترقية"
+    },
+    "reports": {
+      "title": "التقارير والتحليلات",
+      "description": "نظرة عامة على تقديمات نفقات وإحصائيات منظمتك",
+      "export_data": "تصدير البيانات",
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
+      "quick_actions": "إجراءات سريعة",
+      "view_all_submissions": "عرض جميع التقديمات",
+      "create_new_submission": "إنشاء تقديم جديد"
+    },
+    "settings": {
+      "title": "إعدادات المسؤول",
+      "description": "إدارة تكوين وتفضيلات النظام لمنظمتك",
+      "back_to_dashboard": "العودة إلى لوحة التحكم",
+      "organization_settings": "إعدادات المنظمة",
+      "organization_name": "اسم المنظمة",
+      "organization_name_placeholder": "أدخل اسم المنظمة",
+      "contact_email": "البريد الإلكتروني للاتصال",
+      "contact_email_placeholder": "أدخل البريد الإلكتروني للاتصال",
+      "timezone": "المنطقة الزمنية",
+      "save_settings": "حفظ الإعدادات",
+      "system_preferences": "تفضيلات النظام",
+      "email_notifications": "إشعارات البريد الإلكتروني للتقديمات الجديدة",
+      "auto_approval": "تمكين الموافقة التلقائية للنفقات منخفضة القيمة",
+      "ai_analysis": "تمكين تحليل المستندات بالذكاء الاصطناعي",
+      "storage_information": "معلومات التخزين",
+      "used_storage": "التخزين المستخدم",
+      "storage_quota": "تم استخدام 25% من حصة التخزين الخاصة بك"
+    },
+    "export": {
+      "title": "تصدير البيانات",
+      "description": "تنزيل بيانات تقديم نفقات منظمتك",
+      "back_to_reports": "العودة إلى التقارير",
+      "export_options": "خيارات التصدير",
+      "csv_export": "تصدير CSV",
+      "csv_description": "تنزيل جميع بيانات التقديم بتنسيق CSV للتحليل في Excel أو أدوات أخرى",
+      "csv_features": {
+        "feature1": "يتضمن جميع حقول التقديم والبيانات الوصفية",
+        "feature2": "متوافق مع Excel و Google Sheets وأدوات تحليل البيانات",
+        "feature3": "يحتوي على أعداد الملفات ومعلومات التعليقات"
+      },
+      "download_csv": "تنزيل CSV",
+      "exporting": "جاري التصدير...",
+      "export_information": "معلومات التصدير",
+      "export_info_features": {
+        "feature1": "يتم تصفية البيانات لمنظمتك فقط",
+        "feature2": "يتضمن التقديمات من جميع الحالات (مسودة، مقدمة، معتمدة، مرفوضة)",
+        "feature3": "يحتوي التصدير على تواريخ التقديم والمبالغ ومعلومات الملفات وقرارات المراجعة",
+        "feature4": "سيتم تنزيل الملف فورًا عند النقر على \"تنزيل CSV\""
+      },
+      "quick_links": "روابط سريعة",
+      "view_reports_dashboard": "عرض لوحة تحكم التقارير",
+      "manage_submissions": "إدارة التقديمات"
+    }
+  },
+  "Review": {
+    "meta_title": "مراجعة النفقات - Authentiq",
+    "meta_description": "مراجعة وإدارة تقديمات النفقات مع التحقق من المستندات المدعوم بالذكاء الاصطناعي",
+    "page": {
+      "title": "مراجعة النفقات",
+      "description": "إدارة تقديمات النفقات في انتظار المراجعة",
+      "view_my_submissions": "عرض تقديماتي",
+      "no_submissions_title": "لا توجد تقديمات في انتظار المراجعة",
+      "no_submissions_description": "تمت معالجة جميع التقديمات أو لا توجد أي منها في انتظار المراجعة.",
+      "submitted_by": "تم التقديم بواسطة {email} في {date}",
+      "type": "النوع: {type}",
+      "amount": "المبلغ: {amount}",
+      "files": "الملفات: {count}",
+      "comments": "التعليقات: {count}",
+      "view_details": "عرض التفاصيل",
+      "review": "مراجعة",
+      "load_more": "تحميل المزيد",
+      "error": "خطأ",
+      "permission_denied": "ليس لديك إذن للوصول إلى هذه الصفحة",
+      "load_error": "فشل في تحميل التقديمات للمراجعة"
+    },
+    "detail": {
+      "title": "مراجعة التقديم",
+      "description": "مراجعة تفاصيل التقديم واتخاذ قرار",
+      "back_to_list": "العودة إلى قائمة المراجعة",
+      "view_consultation": "عرض في وضع التشاور",
+      "submission_not_found": "لم يتم العثور على التقديم",
+      "submission_not_found_description": "لم يتمكن من تحميل التقديم المطلوب.",
+      "not_available": "هذا التقديم غير متاح للمراجعة",
+      "load_error": "خطأ في تحميل التقديم"
+    }
+  },
+  "Onboarding": {
+    "meta_title": "البدء - Authentiq",
+    "meta_description": "أكمل إعداد منظمتك وابدأ مع Authentiq"
   }
 }

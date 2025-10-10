@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@clerk/nextjs'
@@ -53,6 +54,7 @@ interface Pagination {
 export default function ReviewPage() {
   const router = useRouter()
   const { isLoaded, userId } = useAuth()
+  const t = useTranslations('Review.page')
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
@@ -77,7 +79,7 @@ export default function ReviewPage() {
     }
 
     if (!canUserReview) {
-      setError('You do not have permission to access this page')
+      setError(t('permission_denied'))
       setLoading(false)
       return
     }
@@ -91,7 +93,7 @@ export default function ReviewPage() {
       const response = await fetch('/api/review')
       
       if (!response.ok) {
-        throw new Error('Failed to load submissions for review')
+        throw new Error(t('load_error'))
       }
       
       const data = await response.json()
@@ -99,7 +101,7 @@ export default function ReviewPage() {
       setPagination(data.pagination)
     } catch (error) {
       console.error('Load review submissions error:', error)
-      setError('Failed to load submissions for review')
+      setError(t('load_error'))
     } finally {
       setLoading(false)
     }
@@ -138,29 +140,25 @@ export default function ReviewPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-1 text-sm text-red-700">
-                <p>{error}</p>
-              </div>
+      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-red-800">{t('error')}</h3>
+            <div className="mt-1 text-sm text-red-700">
+              <p>{error}</p>
             </div>
           </div>
         </div>
@@ -169,20 +167,18 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Expense Review</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Manage expense submissions pending review
-            </p>
-          </div>
-          <Button onClick={() => router.push('/submissions')}>
-            View My Submissions
-          </Button>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t('description')}
+          </p>
         </div>
+        <Button onClick={() => router.push('/submissions')}>
+          {t('view_my_submissions')}
+        </Button>
       </div>
 
       {/* Submissions List */}
@@ -192,9 +188,9 @@ export default function ReviewPage() {
             <svg className="mx-auto h-12 w-12 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-foreground">No submissions pending review</h3>
+            <h3 className="mt-2 text-sm font-medium text-foreground">{t('no_submissions_title')}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              All submissions have been processed or none are awaiting review.
+              {t('no_submissions_description')}
             </p>
           </div>
         ) : (
@@ -216,14 +212,14 @@ export default function ReviewPage() {
                     </div>
                     
                     <p className="text-sm text-muted-foreground mb-2">
-                      Submitted by {submission.user.email} on {formatDate(submission.createdAt)}
+                      {t('submitted_by', { email: submission.user.email, date: formatDate(submission.createdAt) })}
                     </p>
                     
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <span>Type: {submission.type}</span>
-                      <span>Amount: {formatAmount(submission.amount)}</span>
-                      <span>Files: {submission.files.length}</span>
-                      <span>Comments: {getCommentCount(submission)}</span>
+                      <span>{t('type', { type: submission.type })}</span>
+                      <span>{t('amount', { amount: formatAmount(submission.amount) })}</span>
+                      <span>{t('files', { count: submission.files.length })}</span>
+                      <span>{t('comments', { count: getCommentCount(submission) })}</span>
                     </div>
                   </div>
                   
@@ -233,13 +229,13 @@ export default function ReviewPage() {
                       size="sm"
                       onClick={() => router.push(`/submissions/${submission.id}`)}
                     >
-                      View Details
+                      {t('view_details')}
                     </Button>
                     <Button
                       size="sm"
                       onClick={() => router.push(`/review/${submission.id}`)}
                     >
-                      Review
+                      {t('review')}
                     </Button>
                   </div>
                 </div>
@@ -251,7 +247,7 @@ export default function ReviewPage() {
 
       {/* Pagination */}
       {pagination.hasMore && (
-        <div className="mt-6 flex justify-center">
+        <div className="flex justify-center">
           <Button
             variant="outline"
             onClick={() => {
@@ -259,7 +255,7 @@ export default function ReviewPage() {
               console.log('Load more review submissions')
             }}
           >
-            Load More
+            {t('load_more')}
           </Button>
         </div>
       )}

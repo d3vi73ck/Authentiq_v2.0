@@ -5,7 +5,7 @@ import { DashboardSidebar } from '@/features/dashboard/DashboardSidebar';
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
     locale: props.params.locale,
-    namespace: 'Dashboard',
+    namespace: 'Review',
   });
 
   return {
@@ -14,7 +14,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
   };
 }
 
-export default function DashboardLayout(props: { children: React.ReactNode }) {
+export default function ReviewLayout(props: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
       <DashboardSidebar />

@@ -1,5 +1,7 @@
 import { headers } from 'next/headers'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { unstable_setRequestLocale } from 'next-intl/server'
 
 import { auth } from '@clerk/nextjs/server'
 import { requireAnyRole } from '@/libs/rbac'
@@ -7,7 +9,10 @@ import { getAnalyticsData } from '@/libs/analytics'
 import StatsCards from '@/components/dashboard/StatsCards'
 import Charts from '@/components/dashboard/Charts'
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage(props: { params: { locale: string } }) {
+  unstable_setRequestLocale(props.params.locale)
+  const t = useTranslations('Admin.dashboard')
+  
   const headersList = await headers()
   const organizationId = headersList.get('x-organization-id')
   await auth()
@@ -18,13 +23,13 @@ export default async function AdminDashboardPage() {
   } catch {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
-        <p className="mt-2 text-gray-600">You need admin privileges to access this page.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('access_denied')}</h1>
+        <p className="mt-2 text-gray-600">{t('access_denied_description')}</p>
         <Link
           href="/dashboard"
           className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
         >
-          Back to Dashboard
+          {t('back_to_dashboard')}
         </Link>
       </div>
     )
@@ -33,8 +38,8 @@ export default async function AdminDashboardPage() {
   if (!organizationId) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900">Organization Not Found</h1>
-        <p className="mt-2 text-gray-600">Please check the URL and try again.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('organization_not_found')}</h1>
+        <p className="mt-2 text-gray-600">{t('organization_not_found_description')}</p>
       </div>
     )
   }
@@ -47,9 +52,9 @@ export default async function AdminDashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="mt-2 text-gray-600">
-            Overview of your organization's expense submissions and statistics
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t('description')}
           </p>
         </div>
         <div className="flex space-x-4">
@@ -57,13 +62,13 @@ export default async function AdminDashboardPage() {
             href="/admin/reports"
             className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
           >
-            View Reports
+            {t('view_reports')}
           </Link>
           <Link
             href="/dashboard"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
           >
-            Back to Dashboard
+            {t('back_to_dashboard')}
           </Link>
         </div>
       </div>
@@ -75,23 +80,23 @@ export default async function AdminDashboardPage() {
       <Charts analyticsData={analyticsData} />
 
       {/* Quick Actions */}
-      <div className="bg-white overflow-hidden shadow rounded-lg">
+      <div className="bg-card shadow-sm border border-border rounded-lg">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Quick Actions
+          <h3 className="text-lg font-medium text-foreground mb-4">
+            {t('quick_actions')}
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Link
               href="/submissions"
               className="inline-flex items-center px-4 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
-              View All Submissions
+              {t('view_all_submissions')}
             </Link>
             <Link
               href="/submissions/new"
               className="inline-flex items-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
             >
-              Create New Submission
+              {t('create_new_submission')}
             </Link>
           </div>
         </div>

@@ -249,6 +249,10 @@
       "AUTRE": "Other"
     }
   },
+  "Admin": {
+    "meta_title": "Admin Dashboard",
+    "meta_description": "Administration panel for managing organizations and users"
+  },
   "OrganizationMembers": {
     "title_bar": "Organization Members",
     "title_bar_description": "Manage your organization members and invitations",
@@ -269,5 +273,173 @@
     "member_since": "Member since {date}",
     "pending_invitations": "Pending Invitations",
     "invited_on": "Invited on {date}"
+  },
+  "ErrorPages": {
+    "meta_title": "Error - Authentiq",
+    "meta_description": "An error occurred while processing your request",
+    "404": {
+      "title": "Page Not Found",
+      "description": "Sorry, we couldn't find the page you're looking for.",
+      "suggestion": "The page may have been moved, deleted, or you may have entered an incorrect URL.",
+      "go_home": "Go Home",
+      "try_again": "Try Again",
+      "helpful_links": "Need help? Here are some helpful links:",
+      "submissions_link": "Submissions",
+      "review_link": "Review",
+      "dashboard_link": "Dashboard"
+    },
+    "500": {
+      "title": "Internal Server Error",
+      "description": "Sorry, something went wrong on our end.",
+      "suggestion": "We're working to fix the issue. Please try again later.",
+      "go_home": "Go Home",
+      "try_again": "Try Again",
+      "service_status": "Service Status",
+      "team_notified": "Our team has been notified and is working to resolve the issue.",
+      "contact_support": "If the problem persists, please",
+      "contact_support_link": "contact our support team"
+    },
+    "generic": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred.",
+      "suggestion": "Please try again or contact support if the problem persists.",
+      "go_home": "Go Home",
+      "try_again": "Try Again",
+      "error_details": "Error Details (Development)",
+      "support_info": "If this error continues, please",
+      "support_info_link": "contact our support team",
+      "support_info_suffix": "and include the error details above."
+    }
+  },
+  "Admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "description": "Overview of your organization's expense submissions and statistics",
+      "view_reports": "View Reports",
+      "back_to_dashboard": "Back to Dashboard",
+      "quick_actions": "Quick Actions",
+      "view_all_submissions": "View All Submissions",
+      "create_new_submission": "Create New Submission",
+      "access_denied": "Access Denied",
+      "access_denied_description": "You need admin privileges to access this page.",
+      "organization_not_found": "Organization Not Found",
+      "organization_not_found_description": "Please check the URL and try again."
+    },
+    "billing": {
+      "title": "Billing & Subscription",
+      "description": "Manage your organization's subscription and payment information",
+      "back_to_dashboard": "Back to Dashboard",
+      "current_plan": "Current Plan",
+      "pro_plan": "Pro Plan",
+      "pro_plan_price": "$49/month per organization",
+      "active": "Active",
+      "team_members": "Team Members",
+      "organizations": "Organizations",
+      "storage": "Storage",
+      "manage_subscription": "Manage Subscription",
+      "billing_information": "Billing Information",
+      "next_billing_date": "Next Billing Date",
+      "payment_method": "Payment Method",
+      "billing_email": "Billing Email",
+      "payment_history": "Payment History",
+      "paid": "Paid",
+      "view_full_history": "View Full Payment History",
+      "upgrade_options": "Upgrade Options",
+      "enterprise_plan": "Enterprise Plan",
+      "enterprise_plan_price": "$99/month per organization",
+      "unlimited_team_members": "Unlimited team members",
+      "unlimited_organizations": "Unlimited organizations",
+      "priority_support": "Priority support",
+      "upgrade": "Upgrade"
+    },
+    "reports": {
+      "title": "Reports & Analytics",
+      "description": "Overview of your organization's expense submissions and statistics",
+      "export_data": "Export Data",
+      "back_to_dashboard": "Back to Dashboard",
+      "quick_actions": "Quick Actions",
+      "view_all_submissions": "View All Submissions",
+      "create_new_submission": "Create New Submission"
+    },
+    "settings": {
+      "title": "Admin Settings",
+      "description": "Manage your organization's configuration and system preferences",
+      "back_to_dashboard": "Back to Dashboard",
+      "organization_settings": "Organization Settings",
+      "organization_name": "Organization Name",
+      "organization_name_placeholder": "Enter organization name",
+      "contact_email": "Contact Email",
+      "contact_email_placeholder": "Enter contact email",
+      "timezone": "Timezone",
+      "save_settings": "Save Settings",
+      "system_preferences": "System Preferences",
+      "email_notifications": "Email notifications for new submissions",
+      "auto_approval": "Enable auto-approval for low-value expenses",
+      "ai_analysis": "Enable AI document analysis",
+      "storage_information": "Storage Information",
+      "used_storage": "Used Storage",
+      "storage_quota": "25% of your storage quota used"
+    },
+    "export": {
+      "title": "Export Data",
+      "description": "Download your organization's expense submission data",
+      "back_to_reports": "Back to Reports",
+      "export_options": "Export Options",
+      "csv_export": "CSV Export",
+      "csv_description": "Download all submission data in CSV format for analysis in Excel or other tools",
+      "csv_features": {
+        "feature1": "Includes all submission fields and metadata",
+        "feature2": "Compatible with Excel, Google Sheets, and data analysis tools",
+        "feature3": "Contains file counts and comment information"
+      },
+      "download_csv": "Download CSV",
+      "exporting": "Exporting...",
+      "export_information": "Export Information",
+      "export_info_features": {
+        "feature1": "Data is filtered to your organization only",
+        "feature2": "Includes submissions from all statuses (draft, submitted, approved, rejected)",
+        "feature3": "Export contains submission dates, amounts, file information, and review decisions",
+        "feature4": "File will be downloaded immediately when you click \"Download CSV\""
+      },
+      "quick_links": "Quick Links",
+      "view_reports_dashboard": "View Reports Dashboard",
+      "manage_submissions": "Manage Submissions"
+    }
+  },
+  "Review": {
+    "meta_title": "Expense Review - Authentiq",
+    "meta_description": "Review and manage expense submissions with AI-powered document verification",
+    "page": {
+      "title": "Expense Review",
+      "description": "Manage expense submissions pending review",
+      "view_my_submissions": "View My Submissions",
+      "no_submissions_title": "No submissions pending review",
+      "no_submissions_description": "All submissions have been processed or none are awaiting review.",
+      "submitted_by": "Submitted by {email} on {date}",
+      "type": "Type: {type}",
+      "amount": "Amount: {amount}",
+      "files": "Files: {count}",
+      "comments": "Comments: {count}",
+      "view_details": "View Details",
+      "review": "Review",
+      "load_more": "Load More",
+      "error": "Error",
+      "permission_denied": "You do not have permission to access this page",
+      "load_error": "Failed to load submissions for review"
+    },
+    "detail": {
+      "title": "Submission Review",
+      "description": "Review submission details and make a decision",
+      "back_to_list": "Back to Review List",
+      "view_consultation": "View in Consultation Mode",
+      "submission_not_found": "Submission not found",
+      "submission_not_found_description": "The requested submission could not be loaded.",
+      "not_available": "This submission is not available for review",
+      "load_error": "Error loading submission"
+    }
+  },
+  "Onboarding": {
+    "meta_title": "Onboarding - Authentiq",
+    "meta_description": "Complete your organization setup and get started with Authentiq"
   }
 }

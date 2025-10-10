@@ -248,5 +248,176 @@
       "RECU": "Reçu",
       "AUTRE": "Autre"
     }
+  },
+  "ErrorPages": {
+    "meta_title": "Erreur - Authentiq",
+    "meta_description": "Une erreur s'est produite lors du traitement de votre demande",
+    "404": {
+      "title": "Page non trouvée",
+      "description": "Désolé, nous n'avons pas pu trouver la page que vous recherchez.",
+      "suggestion": "La page a peut-être été déplacée, supprimée, ou vous avez peut-être saisi une URL incorrecte.",
+      "go_home": "Retour à l'accueil",
+      "try_again": "Réessayer",
+      "helpful_links": "Besoin d'aide ? Voici quelques liens utiles :",
+      "submissions_link": "Soumissions",
+      "review_link": "Révision",
+      "dashboard_link": "Tableau de bord"
+    },
+    "500": {
+      "title": "Erreur interne du serveur",
+      "description": "Désolé, quelque chose s'est mal passé de notre côté.",
+      "suggestion": "Nous travaillons à résoudre le problème. Veuillez réessayer plus tard.",
+      "go_home": "Retour à l'accueil",
+      "try_again": "Réessayer",
+      "service_status": "État du service",
+      "team_notified": "Notre équipe a été informée et travaille à résoudre le problème.",
+      "contact_support": "Si le problème persiste, veuillez",
+      "contact_support_link": "contacter notre équipe de support"
+    },
+    "generic": {
+      "title": "Quelque chose s'est mal passé",
+      "description": "Une erreur inattendue s'est produite.",
+      "suggestion": "Veuillez réessayer ou contacter le support si le problème persiste.",
+      "go_home": "Retour à l'accueil",
+      "try_again": "Réessayer",
+      "error_details": "Détails de l'erreur (Développement)",
+      "support_info": "Si cette erreur persiste, veuillez",
+      "support_info_link": "contacter notre équipe de support",
+      "support_info_suffix": "et inclure les détails de l'erreur ci-dessus."
+    }
+  },
+  "Admin": {
+    "meta_title": "Tableau de bord d'administration",
+    "meta_description": "Panneau d'administration pour gérer les organisations et les utilisateurs"
+  ,
+    "dashboard": {
+      "title": "Tableau de bord d'administration",
+      "description": "Aperçu des soumissions de dépenses et des statistiques de votre organisation",
+      "view_reports": "Voir les rapports",
+      "back_to_dashboard": "Retour au tableau de bord",
+      "quick_actions": "Actions rapides",
+      "view_all_submissions": "Voir toutes les soumissions",
+      "create_new_submission": "Créer une nouvelle soumission",
+      "access_denied": "Accès refusé",
+      "access_denied_description": "Vous avez besoin de privilèges d'administrateur pour accéder à cette page.",
+      "organization_not_found": "Organisation non trouvée",
+      "organization_not_found_description": "Veuillez vérifier l'URL et réessayer."
+    },
+    "billing": {
+      "title": "Facturation et abonnement",
+      "description": "Gérez l'abonnement et les informations de paiement de votre organisation",
+      "back_to_dashboard": "Retour au tableau de bord",
+      "current_plan": "Plan actuel",
+      "pro_plan": "Plan Pro",
+      "pro_plan_price": "49 $/mois par organisation",
+      "active": "Actif",
+      "team_members": "Membres de l'équipe",
+      "organizations": "Organisations",
+      "storage": "Stockage",
+      "manage_subscription": "Gérer l'abonnement",
+      "billing_information": "Informations de facturation",
+      "next_billing_date": "Prochaine date de facturation",
+      "payment_method": "Méthode de paiement",
+      "billing_email": "Email de facturation",
+      "payment_history": "Historique des paiements",
+      "paid": "Payé",
+      "view_full_history": "Voir l'historique complet",
+      "upgrade_options": "Options de mise à niveau",
+      "enterprise_plan": "Plan Entreprise",
+      "enterprise_plan_price": "99 $/mois par organisation",
+      "unlimited_team_members": "Membres d'équipe illimités",
+      "unlimited_organizations": "Organisations illimitées",
+      "priority_support": "Support prioritaire",
+      "upgrade": "Mettre à niveau"
+    },
+    "reports": {
+      "title": "Rapports et analyses",
+      "description": "Aperçu des soumissions de dépenses et des statistiques de votre organisation",
+      "export_data": "Exporter les données",
+      "back_to_dashboard": "Retour au tableau de bord",
+      "quick_actions": "Actions rapides",
+      "view_all_submissions": "Voir toutes les soumissions",
+      "create_new_submission": "Créer une nouvelle soumission"
+    },
+    "settings": {
+      "title": "Paramètres d'administration",
+      "description": "Gérez la configuration et les préférences système de votre organisation",
+      "back_to_dashboard": "Retour au tableau de bord",
+      "organization_settings": "Paramètres de l'organisation",
+      "organization_name": "Nom de l'organisation",
+      "organization_name_placeholder": "Entrez le nom de l'organisation",
+      "contact_email": "Email de contact",
+      "contact_email_placeholder": "Entrez l'email de contact",
+      "timezone": "Fuseau horaire",
+      "save_settings": "Enregistrer les paramètres",
+      "system_preferences": "Préférences système",
+      "email_notifications": "Notifications par email pour les nouvelles soumissions",
+      "auto_approval": "Activer l'approbation automatique pour les dépenses de faible valeur",
+      "ai_analysis": "Activer l'analyse de documents par IA",
+      "storage_information": "Informations de stockage",
+      "used_storage": "Stockage utilisé",
+      "storage_quota": "25 % de votre quota de stockage utilisé"
+    },
+    "export": {
+      "title": "Exporter les données",
+      "description": "Téléchargez les données de soumission de dépenses de votre organisation",
+      "back_to_reports": "Retour aux rapports",
+      "export_options": "Options d'exportation",
+      "csv_export": "Export CSV",
+      "csv_description": "Téléchargez toutes les données de soumission au format CSV pour analyse dans Excel ou d'autres outils",
+      "csv_features": {
+        "feature1": "Inclut tous les champs de soumission et métadonnées",
+        "feature2": "Compatible avec Excel, Google Sheets et les outils d'analyse de données",
+        "feature3": "Contient les comptes de fichiers et les informations de commentaires"
+      },
+      "download_csv": "Télécharger CSV",
+      "exporting": "Exportation en cours...",
+      "export_information": "Informations d'exportation",
+      "export_info_features": {
+        "feature1": "Les données sont filtrées pour votre organisation uniquement",
+        "feature2": "Inclut les soumissions de tous les statuts (brouillon, soumis, approuvé, rejeté)",
+        "feature3": "L'export contient les dates de soumission, les montants, les informations de fichiers et les décisions de révision",
+        "feature4": "Le fichier sera téléchargé immédiatement lorsque vous cliquez sur \"Télécharger CSV\""
+      },
+      "quick_links": "Liens rapides",
+      "view_reports_dashboard": "Voir le tableau de bord des rapports",
+      "manage_submissions": "Gérer les soumissions"
+    }
+  },
+  "Review": {
+    "meta_title": "Révision des dépenses - Authentiq",
+    "meta_description": "Réviser et gérer les soumissions de dépenses avec vérification de documents alimentée par l'IA",
+    "page": {
+      "title": "Révision des dépenses",
+      "description": "Gérer les soumissions de dépenses en attente de révision",
+      "view_my_submissions": "Voir mes soumissions",
+      "no_submissions_title": "Aucune soumission en attente de révision",
+      "no_submissions_description": "Toutes les soumissions ont été traitées ou aucune n'attend de révision.",
+      "submitted_by": "Soumis par {email} le {date}",
+      "type": "Type : {type}",
+      "amount": "Montant : {amount}",
+      "files": "Fichiers : {count}",
+      "comments": "Commentaires : {count}",
+      "view_details": "Voir les détails",
+      "review": "Réviser",
+      "load_more": "Charger plus",
+      "error": "Erreur",
+      "permission_denied": "Vous n'avez pas la permission d'accéder à cette page",
+      "load_error": "Échec du chargement des soumissions pour révision"
+    },
+    "detail": {
+      "title": "Révision de soumission",
+      "description": "Examiner les détails de la soumission et prendre une décision",
+      "back_to_list": "Retour à la liste de révision",
+      "view_consultation": "Voir en mode consultation",
+      "submission_not_found": "Soumission non trouvée",
+      "submission_not_found_description": "La soumission demandée n'a pas pu être chargée.",
+      "not_available": "Cette soumission n'est pas disponible pour révision",
+      "load_error": "Erreur de chargement de la soumission"
+    }
+  },
+  "Onboarding": {
+    "meta_title": "Intégration - Authentiq",
+    "meta_description": "Terminez la configuration de votre organisation et commencez avec Authentiq"
   }
 }

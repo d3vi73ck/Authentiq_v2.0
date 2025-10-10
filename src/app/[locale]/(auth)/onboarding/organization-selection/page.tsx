@@ -14,7 +14,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 }
 
 const OrganizationSelectionPage = () => (
-  <div className="flex min-h-screen items-center justify-center">
+  <div className="flex items-center justify-center min-h-[60vh]">
     <OrganizationList
       afterSelectOrganizationUrl="/dashboard"
       afterCreateOrganizationUrl="/dashboard"
